@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সুরক্ষিত অ্যাডমিন ড্যাশবোর্ড</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Hind Siliguri', sans-serif; }
+        body { background: #f0f2f5; color: #333; padding: 30px 20px; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { max-width: 700px; width: 100%; background: white; padding: 35px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); display: none; }
+        
+        /* লগইন স্ক্রিন স্টাইল */
+        .login-box { max-width: 400px; width: 100%; background: white; padding: 35px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); text-align: center; }
+        .login-box h2 { color: #2c3e50; margin-bottom: 20px; font-size: 24px; }
+
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 25px; font-size: 24px; border-bottom: 2px solid #edf2f7; padding-bottom: 15px; font-weight: 700; }
+        h2.section-title { font-size: 18px; color: #4a5568; margin-top: 30px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+        
+        .form-row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
+        .form-group { flex: 1; min-width: 200px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #4a5568; font-size: 14px; }
+        
+        input, select { width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; transition: all 0.2s; background: #f8fafc; }
+        input:focus, select:focus { outline: none; border-color: #3182ce; background: #fff; box-shadow: 0 0 0 3px rgba(49,130,206,0.15); }
+        
+        button { padding: 12px 20px; background: #3182ce; border: none; color: white; font-size: 16px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #2b6cb0; }
+        
+        .btn-add { background: #2e7d32; width: 100%; margin-top: 5px; }
+        .btn-add:hover { background: #1b5e20; }
+        .btn-danger { background: #e53e3e; padding: 6px 12px; font-size: 13px; }
+        .btn-danger:hover { background: #c53030; }
+        .btn-update { background: #319795; padding: 6px 12px; font-size: 13px; }
+        .btn-update:hover { background: #2c7a7b; }
+
+        .egg-manager-list { margin-top: 10px; background: #f8fafc; border-radius: 12px; padding: 10px; border: 1px solid #e2e8f0; }
+        .egg-manager-item { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.01); border: 1px solid #edf2f7; flex-wrap: wrap; gap: 10px; }
+        
+        .status { position: fixed; bottom: 20px; right: 20px; background: #38a169; color: white; padding: 12px 25px; border-radius: 8px; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: none; }
+    </style>
+</head>
+<body>
+
+<div class="login-box" id="login-screen">
+    <h2>🔐 অ্যাডমিন লগইন</h2>
+    <input type="password" id="admin-pass-input" placeholder="ফায়ারবেস পাসওয়ার্ডটি দিন" style="margin-bottom: 15px; text-align: center;">
+    <button id="btn-login" style="width: 100%;">প্রবেশ করুন</button>
+</div>
+
+<div class="container" id="admin-dashboard">
+    <h1>⚙️ ডিমের বাজার দর - অ্যাডমিন ড্যাশবোর্ড</h1>
+    
+    <h2 class="section-title">📅 ১. বাজার দর তারিখ নির্ধারণ</h2>
+    <div class="form-row">
+        <div class="form-group" style="flex: 2;">
+            <input type="date" id="market-date">
+        </div>
+        <div class="form-group" style="flex: 1;">
+            <button type="button" id="btn-update-date" style="width: 100%;">তারিখ সেভ করুন</button>
+        </div>
+    </div>
+
+    <h2 class="section-title">➕ ২. নতুন ডিমের ক্যাটাগরি যোগ করুন</h2>
+    <form id="add-egg-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label>বাংলা নাম</label>
+                <input type="text" id="new-name-bg" placeholder="যেমন: হাঁসের ডিম" required>
+            </div>
+            <div class="form-group">
+                <label>ইংরেজি নাম</label>
+                <input type="text" id="new-name-en" placeholder="যেমন: Duck Egg" required>
+            </div>
+            <div class="form-group" style="max-width: 150px;">
+                <label>প্রতি পিসের দাম (৳)</label>
+                <input type="number" step="0.01" id="new-price" placeholder="11.50" required>
+            </div>
+        </div>
+        <button type="submit" class="btn-add">আইটেম যুক্ত করুন</button>
+    </form>
+
+    <h2 class="section-title">📝 ৩. বর্তমান তালিকা ও প্রতি পিসের দাম এডিট</h2>
+    <div id="egg-manager-list" class="egg-manager-list">লোড হচ্ছে...</div>
+
+    <div class="status" id="status-msg">✅ সফলভাবে আপডেট হয়েছে!</div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyAGaVfReUf8e2U1yhrA4pmgIVfAwgg0yt4",
+  authDomain: "kombat-4bd86.firebaseapp.com",
+  databaseURL: "https://kombat-4bd86-default-rtdb.firebaseio.com",
+  projectId: "kombat-4bd86",
+  storageBucket: "kombat-4bd86.firebasestorage.app",
+  messagingSenderId: "913703600176",
+  appId: "1:913703600176:web:684e969d5b67bde76e2df5",
+  measurementId: "G-GFKQ7VDHBQ"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const rootRef = ref(db, 'egg-market');
+    const itemsRef = ref(db, 'egg-market/items');
+
+    // ফায়ারবেস থেকে পাসওয়ার্ড ভেরিফাই করার ফাংশন
+    document.getElementById('btn-login').addEventListener('click', () => {
+        const userInput = document.getElementById('admin-pass-input').value;
+        const passRef = ref(db, 'admin-settings/password');
+
+        // ডাটাবেস থেকে রিয়েলটাইমে পাসওয়ার্ড রিড করা হচ্ছে
+        get(passRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const dbPassword = snapshot.val();
+                
+                if(userInput === dbPassword) {
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('admin-dashboard').style.display = 'block';
+                    loadDashboardData(); // লগইন সফল হলে ডাটা লোড হবে
+                } else {
+                    alert('ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।');
+                }
+            } else {
+                alert('ডাটাবেসে কোনো পাসওয়ার্ড সেট করা নেই! দয়া করে ফায়ারবেস কনসোলে "admin-settings/password" তৈরি করুন।');
+            }
+        }).catch((error) => {
+            alert("Error authenticating: " + error.message);
+        });
+    });
+
+    function loadDashboardData() {
+        onValue(rootRef, (snapshot) => {
+            const data = snapshot.val();
+            const managerList = document.getElementById('egg-manager-list');
+            
+            if (data) {
+                if(data.date) document.getElementById('market-date').value = data.date;
+
+                if(data.items) {
+                    let html = '';
+                    Object.keys(data.items).forEach(key => {
+                        const item = data.items[key];
+                        html += `
+                            <div class="egg-manager-item">
+                                <div>
+                                    <strong>${item.nameBg}</strong> <span style="color:#718096; font-size:14px;">(${item.nameEn})</span>
+                                </div>
+                                <div style="display:flex; gap:8px; align-items:center;">
+                                    <span style="font-size:14px; color:#4a5568;">১ পিস: ৳</span>
+                                    <input type="number" step="0.01" value="${item.price}" style="width:90px; padding:6px;" id="price-${key}">
+                                    <button onclick="window.updatePrice('${key}')" class="btn-update">আপডেট</button>
+                                    <button onclick="window.deleteItem('${key}')" class="btn-danger">মুছুন</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    managerList.innerHTML = html;
+                } else {
+                    managerList.innerHTML = '<p style="padding:10px; text-align:center;">কোনো ডিমের তালিকা পাওয়া যায়নি।</p>';
+                }
+            }
+        });
+    }
+
+    // তারিখ আপডেট
+    document.getElementById('btn-update-date').addEventListener('click', () => {
+        const selectedDate = document.getElementById('market-date').value;
+        if(!selectedDate) return alert('তারিখ সিলেক্ট করুন');
+        update(rootRef, { date: selectedDate }).then(() => showStatus());
+    });
+
+    // নতুন ডিম যোগ
+    document.getElementById('add-egg-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nameBg = document.getElementById('new-name-bg').value;
+        const nameEn = document.getElementById('new-name-en').value;
+        const price = parseFloat(document.getElementById('new-price').value).toFixed(2);
+
+        const newItemRef = push(itemsRef);
+        set(newItemRef, { nameBg, nameEn, price }).then(() => {
+            document.getElementById('add-egg-form').reset();
+            showStatus();
+        });
+    });
+
+    // দাম এডিট গ্লোবাল ফাংশন
+    window.updatePrice = (key) => {
+        const updatedPrice = parseFloat(document.getElementById(`price-${key}`).value).toFixed(2);
+        const itemPriceRef = ref(db, `egg-market/items/${key}`);
+        update(itemPriceRef, { price: updatedPrice }).then(() => showStatus());
+    };
+
+    // আইটেম ডিলিট গ্লোবাল ফাংশন
+    window.deleteItem = (key) => {
+        if(confirm('আপনি কি নিশ্চিতভাবে এটি মুছে ফেলতে চান?')) {
+            remove(ref(db, `egg-market/items/${key}`)).then(() => showStatus());
+        }
+    };
+
+    function showStatus() {
+        const statusMsg = document.getElementById('status-msg');
+        statusMsg.style.display = 'block';
+        setTimeout(() => { statusMsg.style.display = 'none'; }, 2000);
+    }
+</script>
+</body>
+</html>

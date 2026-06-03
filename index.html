@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>প্রতিদিনের ডিমের বাজার দর</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Hind Siliguri', sans-serif; }
+        body { background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%); color: #2d3748; padding: 40px 20px; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { max-width: 750px; width: 100%; background: #ffffff; padding: 35px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.8); }
+        
+        .header-area { text-align: center; margin-bottom: 30px; }
+        h1 { color: #e67e22; margin-bottom: 8px; font-size: 28px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .date { display: inline-block; color: #4a5568; font-size: 15px; font-weight: 600; background: #edf2f7; padding: 6px 16px; border-radius: 30px; margin-top: 5px; }
+        
+        /* টেবিল ডিজাইন */
+        .table-responsive { overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        table { width: 100%; border-collapse: collapse; background: white; text-align: left; }
+        th, td { padding: 16px 20px; text-align: center; }
+        th:first-child, td:first-child { text-align: left; }
+        
+        th { background-color: #e67e22; color: white; font-weight: 600; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+        tr { border-bottom: 1px solid #edf2f7; transition: background 0.2s; }
+        tr:last-child { border-bottom: none; }
+        tr:hover { background-color: #f8fafc; }
+        
+        .egg-name-td { font-weight: 700; color: #2d3748; font-size: 17px; }
+        .egg-name-td small { color: #718096; font-weight: 400; font-size: 13px; display: block; margin-top: 2px; }
+        .price-text { font-weight: 700; color: #2ecc71; font-size: 18px; }
+        
+        .loading { text-align: center; color: #718096; font-style: italic; padding: 30px; font-size: 16px; }
+        
+        @media (max-width: 576px) {
+            body { padding: 15px 10px; }
+            .container { padding: 20px 15px; }
+            th, td { padding: 12px 10px; font-size: 14px; }
+            .egg-name-td { font-size: 15px; }
+            .price-text { font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-area">
+        <h1>🥚 প্রতিদিনের ডিমের বাজার দর</h1>
+        <div class="date" id="current-date">তারিখ: লোড হচ্ছে...</div>
+    </div>
+
+    <div class="table-responsive">
+        <table id="market-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>ডিমের নাম</th>
+                    <th>১ পিস</th>
+                    <th>১ হালি (৪টি)</th>
+                    <th>১ ডজন (১২টি)</th>
+                </tr>
+            </thead>
+            <tbody id="egg-table-body"></tbody>
+        </table>
+    </div>
+
+    <div id="loading-text" class="loading">বাজারের তাজা দাম লোড হচ্ছে...</div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyAGaVfReUf8e2U1yhrA4pmgIVfAwgg0yt4",
+  authDomain: "kombat-4bd86.firebaseapp.com",
+  databaseURL: "https://kombat-4bd86-default-rtdb.firebaseio.com",
+  projectId: "kombat-4bd86",
+  storageBucket: "kombat-4bd86.firebasestorage.app",
+  messagingSenderId: "913703600176",
+  appId: "1:913703600176:web:684e969d5b67bde76e2df5",
+  measurementId: "G-GFKQ7VDHBQ"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    onValue(ref(db, 'egg-market'), (snapshot) => {
+        const data = snapshot.val();
+        const tableBody = document.getElementById('egg-table-body');
+        const dateHTML = document.getElementById('current-date');
+        const loadingText = document.getElementById('loading-text');
+        const marketTable = document.getElementById('market-table');
+        
+        if (data) {
+            if(data.date) {
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                dateHTML.innerText = `আপডেট: ${new Date(data.date).toLocaleDateString('bn-BD', options)}`;
+            } else {
+                dateHTML.innerText = `তারিখ নির্ধারণ করা হয়নি`;
+            }
+
+            let tableRows = '';
+            if (data.items) {
+                Object.keys(data.items).forEach(key => {
+                    const item = data.items[key];
+                    const singlePrice = parseFloat(item.price) || 0;
+                    const haliPrice = (singlePrice * 4).toFixed(2);
+                    const dozonPrice = (singlePrice * 12).toFixed(2);
+
+                    tableRows += `
+                        <tr>
+                            <td class="egg-name-td">${item.nameBg}<small>(${item.nameEn})</small></td>
+                            <td class="price-text">৳ ${singlePrice.toFixed(2)}</td>
+                            <td class="price-text">৳ ${haliPrice}</td>
+                            <td class="price-text">৳ ${dozonPrice}</td>
+                        </tr>
+                    `;
+                });
+                
+                tableBody.innerHTML = tableRows;
+                loadingText.style.display = 'none';
+                marketTable.style.display = 'table';
+            } else {
+                loadingText.innerText = 'কোনো আইটেম পাওয়া যায়নি।';
+            }
+        } else {
+            loadingText.innerText = 'কোনো ডাটা পাওয়া যায়নি।';
+        }
+    });
+</script>
+</body>
+</html>
