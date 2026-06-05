@@ -166,11 +166,21 @@
         });
 
         // Reset user balance after you manually pay them
-        function resetUserBalance(uid) {
-            if(confirm("Apni ki eke manually taka send korechen? Mark as paid korle balance 0 hoye jabe.")) {
-                database.ref('users/' + uid).update({ balance: 0 });
-            }
-        }
+        // Check Eligibility and auto status update
+const statusBadge = document.getElementById('payout-status');
+const userBalance = data.balance || 0;
+const userRefers = data.refers || 0;
+
+if(userBalance >= 1000 && userRefers >= 20) {
+    statusBadge.innerText = "Eligible for Auto Payout List!";
+    statusBadge.className = "status-badge eligible";
+} else if (userRefers >= 20 && userBalance < 1000) {
+    statusBadge.innerText = `Refer Target Complete! Need ${1000 - userBalance} Tk More`;
+    statusBadge.className = "status-badge";
+} else {
+    statusBadge.innerText = "Not Eligible (Need 1000 Tk & 20 Refers)";
+    statusBadge.className = "status-badge";
+}
 
         function changeUserBalance() {
             const uid = document.getElementById('user-select-list').value;
