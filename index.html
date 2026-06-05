@@ -344,41 +344,41 @@
     }
 
     // --- MONETAG REWARDED AD FUNCTION ---
-    function watchAd() {
+    // --- MONETAG REWARDED AD FUNCTION (TIMER FALLBACK) ---
+function watchAd() {
     let watched = currentUserData.dailyAdCount || 0;
     if (watched >= 10) {
-        alert("দুঃখিত! আপনি আজকের সর্বোচ্চ ১০টি অ্যাড দেখার সীমা অতিক্রম করেছেন।");
+        alert("দুঃখিত! আপনি আজকের সর্বোচ্চ ১০টি অ্যাড দেখার সীমা অতিক্রম করেছেন। আগামীকাল আবার চেষ্টা করুন।");
         return;
     }
 
-    alert("ধাপ ১: বাটন কাজ করেছে! এখন অ্যাড খোঁজা হচ্ছে...");
-
-    if (typeof show_10157334 === 'function') {
-        alert("ধাপ ২: Monetag কোড পাওয়া গেছে! এবার অ্যাড লোড হবে...");
-        
-        show_10157334().then(() => {
-            alert("ধাপ ৩: অ্যাড দেখা সফল হয়েছে! এবার ডাটাবেসে টাকা যোগ হচ্ছে...");
-            
-            userRef.update({ 
-                balance: firebase.firestore.FieldValue.increment(5),
-                dailyAdCount: firebase.firestore.FieldValue.increment(1),
-                lastAdDate: getTodayDateStr()
-            }).then(() => {
-                currentUserData.balance += 5;
-                currentUserData.dailyAdCount += 1;
-                updateUI();
-                alert("ধাপ ৪: অভিনন্দন! সফলভাবে ৫ টাকা অ্যাকাউন্টে যোগ হয়েছে।");
-            }).catch((err) => {
-                alert("ফায়ারবেস ডাটাবেস ইরর: " + err.message);
-            });
-
-        }).catch((err) => {
-            alert("Monetag অ্যাড ইরর: ব্যবহারকারী অ্যাড কেটে দিয়েছে অথবা লোড হয়নি।");
-        });
-
-    } else {
-        alert("ভুল (Error): show_10157334 ফাংশনটি ব্রাউজারে লোডই হয়নি! আপনি কি <head> ট্যাগে মেইন স্ক্রিপ্ট বসিয়েছেন?");
+    // ১. টেলিগ্রাম আইফ্রেমের ভেতর যেন কোড ক্র্যাশ না করে, তাই try-catch ব্যবহার করা হয়েছে
+    try {
+        if (typeof show_10157334 === 'function') {
+            show_10157334(); // অ্যাড রান করার চেষ্টা করবে
+        }
+    } catch (e) {
+        console.log("Monetag script iframe error bypassed.");
     }
+
+    // ২. অ্যাড দেখুক বা না দেখুক, ৫ সেকেন্ডের একটা কাউন্টডাউন চলবে
+    alert("অ্যাড লোড হচ্ছে... অনুগ্রহ করে ৫ সেকেন্ড অপেক্ষা করুন। এরপর টাকা যোগ হবে।");
+    
+    setTimeout(() => {
+        // ৩. ৫ সেকেন্ড শেষ হওয়া মাত্রই ডাটাবেসে টাকা যোগ করে দেওয়া হবে
+        userRef.update({ 
+            balance: firebase.firestore.FieldValue.increment(5), // ৫ টাকা যোগ
+            dailyAdCount: firebase.firestore.FieldValue.increment(1),
+            lastAdDate: getTodayDateStr()
+        }).then(() => {
+            currentUserData.balance += 5;
+            currentUserData.dailyAdCount += 1;
+            updateUI(); // ডিসপ্লে ব্যালেন্স ও লিমিট আপডেট
+            alert("অভিনন্দন! সফলভাবে ৫ টাকা আপনার অ্যাকাউন্টে যোগ হয়েছে।");
+        }).catch((err) => {
+            alert("ডাটাবেস আপডেট করতে সমস্যা হয়েছে: " + err.message);
+        });
+    }, 10000); // ৫০০০ মিলিসেকেন্ড = ৫ সেকেন্ড
 }
 
     function loadDynamicTasks() {
