@@ -1,142 +1,98 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>এডমিন ড্যাশবোর্ড</title>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <title>Firebase Admin Panel</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <style>
-        :root {
-            --bg-color: #0b0f19;
-            --card-color: #151f32;
-            --text-color: #f1f5f9;
-            --accent-color: #38bdf8;
-            --danger-color: #ef4444;
-            --success-color: #22c55e;
-        }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 850px;
-            margin: 0 auto;
-        }
-        .card {
-            background-color: var(--card-color);
-            padding: 25px;
-            border-radius: 16px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        h2, h3 {
-            margin-top: 0;
-            border-bottom: 2px solid #1e293b;
-            padding-bottom: 12px;
-            color: var(--accent-color);
-        }
-        .stats {
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--success-color);
-            margin-bottom: 15px;
-        }
-        .list-item {
-            background: #1e293b;
-            padding: 16px;
-            margin-bottom: 12px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.02);
-            transition: transform 0.2s;
-        }
-        .list-item:hover { transform: translateX(5px); }
-        
-        input, text {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0 15px 0;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            background-color: #0b0f19;
-            color: white;
-            box-sizing: border-box;
-        }
-        input:focus { border-color: var(--accent-color); outline: none; }
-        
-        .btn-add {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: white; border: none; padding: 12px 24px;
-            border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 15px;
-        }
-        .btn-del {
-            background-color: var(--danger-color);
-            color: white; border: none; padding: 8px 14px;
-            border-radius: 6px; cursor: pointer; font-weight: 600;
-        }
-        .btn-appr {
-            background-color: var(--success-color);
-            color: white; border: none; padding: 8px 14px;
-            border-radius: 6px; cursor: pointer; font-weight: 600;
-        }
-        .info-text { font-size: 14px; line-height: 1.6; }
-        .badge {
-            background: #334155; padding: 3px 8px;
-            border-radius: 6px; font-size: 12px; color: var(--accent-color);
-            font-weight: bold;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background-color: #f4f6f9; color: #333; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; }
+        h1 { text-align: center; margin-bottom: 30px; color: #2c3e50; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media(max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h2 { border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; margin-bottom: 15px; font-size: 18px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #34495e; color: white; }
+        input, button, select { width: 100%; padding: 10px; margin-top: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 15px; }
+        button { background-color: #2ecc71; color: white; border: none; font-weight: bold; cursor: pointer; }
+        .btn-danger { background-color: #e74c3c; width: auto; padding: 5px 10px; display: inline-block;}
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="card" style="background: linear-gradient(135deg, #151f32, #1e293b);">
-        <h2>মাস্টার এডমিন ম্যানেজমেন্ট প্যানেল</h2>
-        <p style="color:#94a3b8; margin:0;">এখানে আপনি রিয়েল-টাইমে অ্যাপের ইউজার, টাস্ক এবং উইথড্র রিকোয়েস্ট নিয়ন্ত্রণ করতে পারবেন।</p>
-    </div>
+    <div class="container">
+        <h1>Admin Control Panel (Firebase)</h1>
+        
+        <div class="grid">
+            <div class="card">
+                <h2>User Management & Earning Control</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User Name</th>
+                            <th>Earning (Tk)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-table-body"></tbody>
+                </table>
+                
+                <div style="margin-top: 20px; background: #f9f9f9; padding: 15px; border-radius: 5px;">
+                    <h3>Change User Earning/Balance</h3>
+                    <select id="user-select-list"><option value="">Select User</option></select>
+                    <input type="number" id="new-balance-input" placeholder="Enter New Amount (Taka)">
+                    <button onclick="changeUserBalance()">Update Balance</button>
+                </div>
+            </div>
 
-    <div class="card">
-        <h3>➕ নতুন টাস্ক যুক্ত করুন</h3>
-        <label>টাস্কের নাম / টাইটেল:</label>
-        <input type="text" id="task-title" placeholder="যেমন: Join Telegram Channel বা Watch Ad">
+            <div class="card">
+                <h2>Upload / Change Tasks</h2>
+                <form id="task-form" onsubmit="addNewTask(event)">
+                    <input type="text" id="task-title" placeholder="Task Title" required>
+                    <input type="url" id="task-url" placeholder="Task URL (https://...)" required>
+                    <input type="number" id="task-amount" placeholder="Reward Amount (Taka)" required>
+                    <button type="submit">Upload Task to App</button>
+                </form>
 
-        <label>টাস্ক লিংক (URL):</label>
-        <input type="text" id="task-url" placeholder="https://example.com">
+                <h3 style="margin-top:20px;">Current Live Tasks:</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-task-list"></tbody>
+                </table>
+            </div>
+        </div>
 
-        <label>পুরস্কারের পরিমাণ (টাকা / BDT):</label>
-        <input type="number" id="task-reward" placeholder="যেমন: 10">
-
-        <button class="btn-add" onclick="addNewTask()">টাস্ক পাবলিশ করুন</button>
-    </div>
-
-    <div class="card">
-        <h3>👥 নিবন্ধিত ইউজার তালিকা</h3>
-        <div class="stats">মোট ইউজার সংখ্যা: <span id="total-users" style="color:var(--accent-color)">0</span> জন</div>
-        <div id="users-list" style="max-height: 300px; overflow-y: auto;">
-            ইউজার ডেটা লোড হচ্ছে...
+        <div class="card">
+            <h2>Withdraw Requests (Month-End Payment Tracker)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Method</th>
+                        <th>Phone Number</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="withdraw-table-body"></tbody>
+            </table>
         </div>
     </div>
 
-    <div class="card">
-        <h3>💰 উইথড্র রিকোয়েস্টসমূহ</h3>
-        <div id="admin-requests" style="max-height: 400px; overflow-y: auto;">
-            রিকোয়েস্ট লোড হচ্ছে...
-        </div>
-    </div>
-</div>
-
-<script>
-    // --- FIREBASE CONFIGURATION (index.html এর সাথে মিল রাখুন) ---
-   
-const firebaseConfig = {
+    <script>
+        // ⚠️ APNAR FIREBASE CONFIGURATION EKHANE BOSHAN
+        const firebaseConfig = {
             apiKey: "AIzaSyCKITS8pdaBi1-icFyZ4CgPxsJe60uszio",
             authDomain: "ctx-9c92f.firebaseapp.com",
             databaseURL: "https://ctx-9c92f-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -146,124 +102,107 @@ const firebaseConfig = {
             appId: "1:853150844818:web:a4e4698526a6a61320a34b",
             measurementId: "G-TEEZQZLPMD"
         };
+        
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
-
-    
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    // অ্যাপ চালুর সাথে সাথে লোড হবে
-    loadUsers();
-    loadWithdrawRequests();
-
-    // --- ADD NEW TASK FUNCTION ---
-    function addNewTask() {
-        const title = document.getElementById('task-title').value;
-        const url = document.getElementById('task-url').value;
-        const reward = parseInt(document.getElementById('task-reward').value);
-
-        if(!title || !url || !reward) {
-            alert("অনুগ্রহ করে টাস্কের সব ঘর সঠিকভাবে পূরণ করুন!");
-            return;
-        }
-
-        db.collection("tasks").add({
-            title: title,
-            url: url,
-            reward: reward,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
-            alert("টাস্কটি সফলভাবে তৈরি হয়েছে এবং ইউজার অ্যাপে লাইভ করা হয়েছে!");
-            // ইনপুট ফিল্ড ক্লিয়ার করা
-            document.getElementById('task-title').value = "";
-            document.getElementById('task-url').value = "";
-            document.getElementById('task-reward').value = "";
-        }).catch((error) => {
-            alert("টাস্ক যুক্ত করতে সমস্যা হয়েছে: " + error);
-        });
-    }
-
-    // --- FETCH ALL USERS ---
-    function loadUsers() {
-        const container = document.getElementById('users-list');
-        db.collection("users").get().then((querySnapshot) => {
-            container.innerHTML = "";
-            document.getElementById('total-users').innerText = querySnapshot.size;
+        // Real-time sync with user lists
+        database.ref('users').on('value', (snapshot) => {
+            const userTable = document.getElementById('user-table-body');
+            const userSelect = document.getElementById('user-select-list');
+            userTable.innerHTML = '';
+            userSelect.innerHTML = '<option value="">Select User</option>';
             
-            if(querySnapshot.empty) {
-                container.innerHTML = "কোনো ইউজার পাওয়া যায়নি।";
-                return;
+            let users = snapshot.val();
+            if(users) {
+                Object.keys(users).forEach(uid => {
+                    let user = users[uid];
+                    userTable.innerHTML += `<tr><td>${user.name}</td><td>${user.balance} Tk</td></tr>`;
+                    userSelect.innerHTML += `<option value="${uid}">${user.name} (${user.balance} Tk)</option>`;
+                });
             }
-
-            querySnapshot.forEach((doc) => {
-                const user = doc.data();
-                container.innerHTML += `
-                    <div class="list-item">
-                        <div class="info-text">
-                            নাম: <b>${user.name || 'গেস্ট'}</b> (ID: ${user.uid})<br>
-                            ব্যালেন্স: <span style="color:var(--success-color)">${user.balance || 0} BDT</span> | রেফার: ${user.refers || 0}টি
-                        </div>
-                        <button class="btn-del" onclick="deleteUser('${doc.id}')">ডিলিট ইউজার</button>
-                    </div>
-                `;
-            });
         });
-    }
 
-    // --- DELETE USER ---
-    function deleteUser(uid) {
-        if(confirm("আপনি কি নিশ্চিত যে এই ইউজারকে চিরতরে ডিলিট করতে চান?")) {
-            db.collection("users").doc(uid).delete().then(() => {
-                alert("ইউজার অ্যাকাউন্ট সফলভাবে ডিলিট করা হয়েছে।");
-                loadUsers();
-            });
-        }
-    }
+        // Add task directly to firebase
+        function addNewTask(e) {
+            e.preventDefault();
+            const title = document.getElementById('task-title').value;
+            const url = document.getElementById('task-url').value;
+            const amount = document.getElementById('task-amount').value;
 
-    // --- FETCH WITHDRAW REQUESTS ---
-    function loadWithdrawRequests() {
-        const container = document.getElementById('admin-requests');
-        db.collection("withdraws").orderBy("timestamp", "desc").get().then((querySnapshot) => {
-            container.innerHTML = "";
-            
-            if(querySnapshot.empty) {
-                container.innerHTML = "বর্তমানে কোনো উইথড্র রিকোয়েস্ট নেই।";
-                return;
-            }
-
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                const accountLabel = (data.method === "Telegram Wallet") ? "ওয়ালেট অ্যাড্রেস" : "মোবাইল নম্বর";
-                
-                container.innerHTML += `
-                    <div class="list-item" style="border-left: 4px solid ${data.status === 'Pending' ? '#f59e0b' : '#10b981'};">
-                        <div class="info-text">
-                            ইউজার: <b>${data.name}</b> (ID: ${data.uid})<br>
-                            মেথড: <span class="badge">${data.method}</span><br>
-                            টাকার পরিমাণ: <b style="color:var(--success-color)">${data.amount} BDT</b><br>
-                            ${accountLabel}: <span style="color:var(--accent-color); font-weight:bold;">${data.account}</span><br>
-                            স্ট্যাটাস: <b style="color:${data.status === 'Pending' ? '#f59e0b' : '#10b981'}">${data.status === 'Pending' ? 'পেন্ডিং (Pending)' : 'অ্যাপ্রুভড (Approved)'}</b>
-                        </div>
-                        ${data.status === 'Pending' ? `
-                            <button class="btn-appr" onclick="approveWithdraw('${doc.id}')">অ্যাপ্রুভ করুন</button>
-                        ` : ''}
-                    </div>
-                `;
-            });
-        });
-    }
-
-    // --- APPROVE WITHDRAW ---
-    function approveWithdraw(docId) {
-        if(confirm("আপনি কি নিশ্চিত যে এই রিকোয়েস্টটি অ্যাপ্রুভ বা পেমেন্ট সম্পন্ন করেছেন?")) {
-            db.collection("withdraws").doc(docId).update({
-                status: "Approved"
+            let taskRef = database.ref('tasks').push();
+            taskRef.set({
+                title: title,
+                url: url,
+                amount: Number(amount)
             }).then(() => {
-                alert("রিকোয়েস্টটি সফলভাবে অ্যাপ্রুভ করা হয়েছে।");
-                loadWithdrawRequests();
+                alert("Task live on App!");
+                document.getElementById('task-form').reset();
             });
         }
-    }
-</script>
+
+        // Live Tasks view and delete
+        database.ref('tasks').on('value', (snapshot) => {
+            const taskList = document.getElementById('admin-task-list');
+            taskList.innerHTML = '';
+            let tasks = snapshot.val();
+            if(tasks) {
+                Object.keys(tasks).forEach(tid => {
+                    taskList.innerHTML += `
+                        <tr>
+                            <td>${tasks[tid].title}</td>
+                            <td>${tasks[tid].amount} Tk</td>
+                            <td><button class="btn-danger" onclick="deleteTask('${tid}')">Delete</button></td>
+                        </tr>
+                    `;
+                });
+            } else {
+                taskList.innerHTML = `<tr><td colspan="3" style="text-align:center;">No task uploaded yet!</td></tr>`;
+            }
+        });
+
+        function deleteTask(tid) {
+            if(confirm("Are you sure to remove this task?")) {
+                database.ref('tasks/' + tid).remove();
+            }
+        }
+
+        // Edit specific user balance
+        function changeUserBalance() {
+            const uid = document.getElementById('user-select-list').value;
+            const amount = document.getElementById('new-balance-input').value;
+            if(!uid || !amount) return alert("Select user and input amount!");
+
+            database.ref('users/' + uid).update({
+                balance: Number(amount)
+            }).then(() => {
+                alert("User Balance Updated!");
+                document.getElementById('new-balance-input').value = '';
+            });
+        }
+
+        // Withdraw Tracker
+        database.ref('withdraw_requests').on('value', (snapshot) => {
+            const table = document.getElementById('withdraw-table-body');
+            table.innerHTML = '';
+            let requests = snapshot.val();
+            if(requests) {
+                Object.keys(requests).forEach(id => {
+                    let req = requests[id];
+                    table.innerHTML += `
+                        <tr>
+                            <td>${req.name}</td>
+                            <td style="text-transform:uppercase;"><b>${req.method}</b></td>
+                            <td>${req.phone}</td>
+                            <td>${req.amount} Tk</td>
+                            <td style="color:orange; font-weight:bold;">${req.status}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                table.innerHTML = `<tr><td colspan="5" style="text-align:center;">No withdraw request yet.</td></tr>`;
+            }
+        });
+    </script>
 </body>
 </html>
