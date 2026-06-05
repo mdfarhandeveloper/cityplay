@@ -254,7 +254,7 @@
     document.getElementById('user-name').innerText = userName;
     document.getElementById('user-id').innerText = userId;
     
-    const botUsername = "YOUR_BOT_USERNAME"; 
+    const botUsername = "ctxcoin_bot"; 
     document.getElementById('refer-link').value = `https://t.me/${botUsername}/app?startapp=${userId}`;
 
     const userRef = db.collection("users").doc(String(userId));
@@ -345,41 +345,41 @@
 
     // --- MONETAG REWARDED AD FUNCTION ---
     function watchAd() {
-        let watched = currentUserData.dailyAdCount || 0;
-        if (watched >= 10) {
-            alert("দুঃখিত! আপনি আজকের সর্বোচ্চ ১০টি অ্যাড দেখার সীমা অতিক্রম করেছেন। আগামীকাল আবার চেষ্টা করুন।");
-            return;
-        }
+    let watched = currentUserData.dailyAdCount || 0;
+    if (watched >= 10) {
+        alert("দুঃখিত! আপনি আজকের সর্বোচ্চ ১০টি অ্যাড দেখার সীমা অতিক্রম করেছেন।");
+        return;
+    }
 
-        // চেক করা হচ্ছে Monetag এর ফাংশনটি ব্রাউজারে এভেইলেবল আছে কি না
-        if (typeof show_10157334 === 'function') {
+    alert("ধাপ ১: বাটন কাজ করেছে! এখন অ্যাড খোঁজা হচ্ছে...");
+
+    if (typeof show_10157334 === 'function') {
+        alert("ধাপ ২: Monetag কোড পাওয়া গেছে! এবার অ্যাড লোড হবে...");
+        
+        show_10157334().then(() => {
+            alert("ধাপ ৩: অ্যাড দেখা সফল হয়েছে! এবার ডাটাবেসে টাকা যোগ হচ্ছে...");
             
-            // আপনার রিওয়ার্ডেড ইন্টারস্টিশিয়াল কোড ট্রিগার করা হলো
-            show_10157334().then(() => {
-                
-                // ইউজার সাকসেসফুলি পুরো অ্যাড দেখার পর শুধুমাত্র এই অংশটি এক্সিকিউট হবে
-                userRef.update({ 
-                    balance: firebase.firestore.FieldValue.increment(5), // ৫ টাকা যোগ হবে
-                    dailyAdCount: firebase.firestore.FieldValue.increment(1),
-                    lastAdDate: getTodayDateStr()
-                }).then(() => {
-                    currentUserData.balance += 5;
-                    currentUserData.dailyAdCount += 1;
-                    updateUI(); // ডিসপ্লে আপডেট
-                    alert("অভিনন্দন! আপনি সফলভাবে সম্পূর্ণ অ্যাডটি দেখেছেন। আপনার অ্যাকাউন্টে ৫ টাকা যোগ করা হয়েছে।");
-                }).catch((err) => {
-                    alert("ডাটাবেস আপডেট করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।");
-                });
-
+            userRef.update({ 
+                balance: firebase.firestore.FieldValue.increment(5),
+                dailyAdCount: firebase.firestore.FieldValue.increment(1),
+                lastAdDate: getTodayDateStr()
+            }).then(() => {
+                currentUserData.balance += 5;
+                currentUserData.dailyAdCount += 1;
+                updateUI();
+                alert("ধাপ ৪: অভিনন্দন! সফলভাবে ৫ টাকা অ্যাকাউন্টে যোগ হয়েছে।");
             }).catch((err) => {
-                alert("অ্যাড লোড হতে সমস্যা হয়েছে বা আপনি অ্যাডটি কেটে দিয়েছেন!");
+                alert("ফায়ারবেস ডাটাবেস ইরর: " + err.message);
             });
 
-        } else {
-            // যদি আপনার স্ক্রিপ্ট ঠিকমতো লোড না হয় বা ভুল কোড ও জোনে সমস্যা থাকে
-            alert("অ্যাড নেটওয়ার্ক এখনো প্রস্তুত নয়! অনুগ্রহ করে কয়েক সেকেন্ড অপেক্ষা করে আবার চেষ্টা করুন অথবা আপনার স্ক্রিপ্ট কোডটি চেক করুন।");
-        }
+        }).catch((err) => {
+            alert("Monetag অ্যাড ইরর: ব্যবহারকারী অ্যাড কেটে দিয়েছে অথবা লোড হয়নি।");
+        });
+
+    } else {
+        alert("ভুল (Error): show_10157334 ফাংশনটি ব্রাউজারে লোডই হয়নি! আপনি কি <head> ট্যাগে মেইন স্ক্রিপ্ট বসিয়েছেন?");
     }
+}
 
     function loadDynamicTasks() {
         const container = document.getElementById('dynamic-tasks-list');
