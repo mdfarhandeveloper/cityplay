@@ -3,129 +3,483 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>প্রতিদিনের ডিমের বাজার দর</title>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>টেলিগ্রাম আর্নিং মিনি অ্যাপ</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src='//libtl.com/sdk.js' data-zone='10157334' data-sdk='show_10157334'></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Hind Siliguri', sans-serif; }
-        body { background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%); color: #2d3748; padding: 40px 20px; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .container { max-width: 750px; width: 100%; background: #ffffff; padding: 35px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.8); }
+        :root {
+            --bg-color: #0f172a;
+            --card-color: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #38bdf8;
+            --success-color: #4ade80;
+            --nav-bg: #1e293b;
+            --warning-color: #fbbf24;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 90px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .header h3 { margin: 0; font-size: 20px; color: var(--accent-color); }
+        .page { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .header-area { text-align: center; margin-bottom: 30px; }
-        h1 { color: #e67e22; margin-bottom: 8px; font-size: 28px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .date { display: inline-block; color: #4a5568; font-size: 15px; font-weight: 600; background: #edf2f7; padding: 6px 16px; border-radius: 30px; margin-top: 5px; }
+        .card {
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .balance-box {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--success-color);
+            margin: 15px 0;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
+        }
+        .btn {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.3);
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 8px -1px rgba(2, 132, 199, 0.4); }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; box-shadow: none; transform: none; }
         
-        /* টেবিল ডিজাইন */
-        .table-responsive { overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
-        table { width: 100%; border-collapse: collapse; background: white; text-align: left; }
-        th, td { padding: 16px 20px; text-align: center; }
-        th:first-child, td:first-child { text-align: left; }
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+            padding: 16px 0;
+        }
+        .task-item:last-child { border-bottom: none; }
         
-        th { background-color: #e67e22; color: white; font-weight: 600; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
-        tr { border-bottom: 1px solid #edf2f7; transition: background 0.2s; }
-        tr:last-child { border-bottom: none; }
-        tr:hover { background-color: #f8fafc; }
+        input, select {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            background-color: #0f172a;
+            color: white;
+            box-sizing: border-box;
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus { border-color: var(--accent-color); outline: none; }
+        label { font-size: 14px; color: #94a3b8; font-weight: 500; }
         
-        .egg-name-td { font-weight: 700; color: #2d3748; font-size: 17px; }
-        .egg-name-td small { color: #718096; font-weight: 400; font-size: 13px; display: block; margin-top: 2px; }
-        .price-text { font-weight: 700; color: #2ecc71; font-size: 18px; }
-        
-        .loading { text-align: center; color: #718096; font-style: italic; padding: 30px; font-size: 16px; }
-        
-        @media (max-width: 576px) {
-            body { padding: 15px 10px; }
-            .container { padding: 20px 15px; }
-            th, td { padding: 12px 10px; font-size: 14px; }
-            .egg-name-td { font-size: 15px; }
-            .price-text { font-size: 15px; }
+        .navbar {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 30px);
+            max-width: 470px;
+            background-color: var(--nav-bg);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+        }
+        .nav-item {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: color 0.2s;
+            font-weight: 600;
+        }
+        .nav-item.active { color: var(--accent-color); }
+        .nav-icon { font-size: 20px; margin-bottom: 4px; display: block; }
+
+        .ad-badge {
+            background-color: #334155;
+            color: var(--warning-color);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header-area">
-        <h1>🥚 প্রতিদিনের ডিমের বাজার দর</h1>
-        <div class="date" id="current-date">তারিখ: লোড হচ্ছে...</div>
+<div class="app-container">
+    <div class="header">
+        <h3 id="user-name">ইউজার লোড হচ্ছে...</h3>
+        <p style="font-size: 12px; color: #94a3b8; margin: 5px 0 0 0;">ID: <span id="user-id">000000</span></p>
     </div>
 
-    <div class="table-responsive">
-        <table id="market-table" style="display: none;">
-            <thead>
-                <tr>
-                    <th>ডিমের নাম</th>
-                    <th>১ পিস</th>
-                    <th>১ হালি (৪টি)</th>
-                    <th>১ ডজন (১২টি)</th>
-                </tr>
-            </thead>
-            <tbody id="egg-table-body"></tbody>
-        </table>
+    <div id="page-home" class="page active">
+        <div class="card" style="text-align: center;">
+            <h2 style="margin:0; font-size: 20px;">আপনার মোট ব্যালেন্স</h2>
+            <div class="balance-box"><span id="balance">0</span> BDT</div>
+        </div>
+
+        
+
+        <div class="card">
+            <h3>রেফার করে আয় করুন</h3>
+            <p style="color: #94a3b8;">প্রতিটি সফল রেফারে পাবেন = ২০ টাকা (BDT)</p>
+            <p><strong>মোট রেফার:</strong> <span id="refer-count" style="color:var(--accent-color); font-size:18px;">0</span>টি</p>
+            <input type="text" id="refer-link" readonly value="লিংক লোড হচ্ছে...">
+            <button class="btn" onclick="copyReferLink()">লিংক কপি করুন</button>
+        </div>
     </div>
 
-    <div id="loading-text" class="loading">বাজারের তাজা দাম লোড হচ্ছে...</div>
+    <div id="page-tasks" class="page">
+        <div class="card">
+            <h3>দৈনিক টাস্কসমূহ</h3>
+            <div id="dynamic-tasks-list">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="margin: 0; font-size: 18px; color: var(--warning-color);">📺 দৈনিক ভিডিও অ্যাড (Monetag)</h3>
+                <span class="ad-badge">বাকি: <span id="ads-remaining">10</span>/10</span>
+            </div>
+            <p style="color: #94a3b8; font-size: 14px; margin: 5px 0 15px 0;">প্রতিটি অ্যাড সম্পূর্ণ দেখলে পাবেন ৫ টাকা। দৈনিক সর্বোচ্চ ১০টি অ্যাড দেখতে পারবেন।</p>
+            <button class="btn" id="btn-watch-ad" style="background: linear-gradient(135deg, #d97706, #b45309);" onclick="watchAd()">অ্যাড দেখুন</button>
+                <p style="text-align:center; color:#94a3b8;">টাস্ক লোড হচ্ছে...</p>
+            </div>
+        </div>
+    </div>
+        
+
+
+    <div id="page-withdraw" class="page">
+        <div class="card">
+            <h3>টাকা উত্তোলন (Withdraw)</h3>
+            <p style="color: #f87171; font-size: 14px; line-height: 1.5;">সর্বনিম্ন উইথড্র: ৫০০ টাকা<br>প্রয়োজনীয় শর্ত: কমপক্ষে ২০টি রেফার থাকতে হবে।</p>
+            <hr style="border-color: #334155; margin: 15px 0;">
+            
+            <label>পেমেন্ট মেথড সিলেক্ট করুন:</label>
+            <select id="withdraw-method" onchange="handleMethodChange()">
+                <option value="bKash">বিকাশ (bKash)</option>
+                <option value="Nagad">নগদ (Nagad)</option>
+                <option value="Telegram Wallet">টেলিগ্রাম ওয়ালেট (Telegram Wallet)</option>
+            </select>
+
+            <div id="account-input-container">
+                <label id="account-label">বিকাশ নম্বর:</label>
+                <input type="text" id="withdraw-account" placeholder="আপনার বিকাশ নম্বর দিন">
+            </div>
+
+            <label>টাকার পরিমাণ (BDT):</label>
+            <input type="number" id="withdraw-amount" placeholder="সর্বনিম্ন ৫০০">
+
+            <button class="btn" id="btn-withdraw" onclick="handleWithdraw()">উইথড্র রিকোয়েস্ট পাঠান</button>
+            <p style="font-size:12px; color:#94a3b8; text-align:center; margin-top:12px;">আপনার রিকোয়েস্টটি ২৪ ঘণ্টার মধ্যে কমপ্লিট করা হবে।</p>
+        </div>
+    </div>
+
+    <div class="navbar">
+        <div class="nav-item active" onclick="switchPage('home')"><span class="nav-icon">🏠</span>হোম</div>
+        <div class="nav-item" onclick="switchPage('tasks')"><span class="nav-icon">📋</span>টাস্ক</div>
+        <div class="nav-item" onclick="switchPage('withdraw')"><span class="nav-icon">💰</span>উইথড্র</div>
+    </div>
 </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+<script>
+    // --- FIREBASE CONFIGURATION ---
+     const firebaseConfig = {
+    apiKey: "AIzaSyBUanIOP4g6OaJNTEceerm7kgk3oYxvXTs",
+    authDomain: "device-streaming-5c9e8564.firebaseapp.com",
+    databaseURL: "https://device-streaming-5c9e8564-default-rtdb.firebaseio.com",
+    projectId: "device-streaming-5c9e8564",
+    storageBucket: "device-streaming-5c9e8564.firebasestorage.app",
+    messagingSenderId: "482804847649",
+    appId: "1:482804847649:web:55e9dd02aac4aea37cbf60"
+  };
 
-    const firebaseConfig = {
-  apiKey: "AIzaSyAGaVfReUf8e2U1yhrA4pmgIVfAwgg0yt4",
-  authDomain: "kombat-4bd86.firebaseapp.com",
-  databaseURL: "https://kombat-4bd86-default-rtdb.firebaseio.com",
-  projectId: "kombat-4bd86",
-  storageBucket: "kombat-4bd86.firebasestorage.app",
-  messagingSenderId: "913703600176",
-  appId: "1:913703600176:web:684e969d5b67bde76e2df5",
-  measurementId: "G-GFKQ7VDHBQ"
-};
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    const tg = window.Telegram.WebApp;
+    tg.expand();
 
-    onValue(ref(db, 'egg-market'), (snapshot) => {
-        const data = snapshot.val();
-        const tableBody = document.getElementById('egg-table-body');
-        const dateHTML = document.getElementById('current-date');
-        const loadingText = document.getElementById('loading-text');
-        const marketTable = document.getElementById('market-table');
-        
-        if (data) {
-            if(data.date) {
-                const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                dateHTML.innerText = `আপডেট: ${new Date(data.date).toLocaleDateString('bn-BD', options)}`;
-            } else {
-                dateHTML.innerText = `তারিখ নির্ধারণ করা হয়নি`;
-            }
+    let userId = tg.initDataUnsafe?.user?.id || "123456789"; 
+    let userName = tg.initDataUnsafe?.user?.first_name || "গেস্ট ইউজার";
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const referredBy = urlParams.get('tgWebAppStartParam') || null;
 
-            let tableRows = '';
-            if (data.items) {
-                Object.keys(data.items).forEach(key => {
-                    const item = data.items[key];
-                    const singlePrice = parseFloat(item.price) || 0;
-                    const haliPrice = (singlePrice * 4).toFixed(2);
-                    const dozonPrice = (singlePrice * 12).toFixed(2);
+    const getTodayDateStr = () => new Date().toISOString().split('T')[0];
 
-                    tableRows += `
-                        <tr>
-                            <td class="egg-name-td">${item.nameBg}<small>(${item.nameEn})</small></td>
-                            <td class="price-text">৳ ${singlePrice.toFixed(2)}</td>
-                            <td class="price-text">৳ ${haliPrice}</td>
-                            <td class="price-text">৳ ${dozonPrice}</td>
-                        </tr>
-                    `;
-                });
-                
-                tableBody.innerHTML = tableRows;
-                loadingText.style.display = 'none';
-                marketTable.style.display = 'table';
-            } else {
-                loadingText.innerText = 'কোনো আইটেম পাওয়া যায়নি।';
-            }
+    let currentUserData = { 
+        balance: 0, 
+        refers: 0, 
+        completedTasks: [],
+        lastAdDate: "",
+        dailyAdCount: 0 
+    };
+
+    document.getElementById('user-name').innerText = userName;
+    document.getElementById('user-id').innerText = userId;
+    
+    const botUsername = "YOUR_BOT_USERNAME"; 
+    document.getElementById('refer-link').value = `https://t.me/${botUsername}/app?startapp=${userId}`;
+
+    const userRef = db.collection("users").doc(String(userId));
+
+    userRef.get().then((doc) => {
+        if (!doc.exists) {
+            currentUserData = {
+                uid: userId,
+                name: userName,
+                balance: 0,
+                refers: 0,
+                referredBy: referredBy,
+                completedTasks: [],
+                lastAdDate: getTodayDateStr(),
+                dailyAdCount: 0
+            };
+
+            userRef.set(currentUserData).then(() => {
+                if (referredBy && referredBy !== String(userId)) {
+                    const referrerRef = db.collection("users").doc(referredBy);
+                    db.runTransaction((transaction) => {
+                        return transaction.get(referrerRef).then((refDoc) => {
+                            if (refDoc.exists) {
+                                let newBalance = (refDoc.data().balance || 0) + 20;
+                                let newRefers = (refDoc.data().refers || 0) + 1;
+                                transaction.update(referrerRef, { balance: newBalance, refers: newRefers });
+                            }
+                        });
+                    });
+                }
+                updateUI();
+            });
         } else {
-            loadingText.innerText = 'কোনো ডাটা পাওয়া যায়নি।';
+            currentUserData = doc.data();
+            
+            if (currentUserData.lastAdDate !== getTodayDateStr()) {
+                currentUserData.dailyAdCount = 0;
+                currentUserData.lastAdDate = getTodayDateStr();
+                userRef.update({
+                    dailyAdCount: 0,
+                    lastAdDate: getTodayDateStr()
+                });
+            }
+            updateUI();
         }
+        loadDynamicTasks();
     });
+
+    function updateUI() {
+        document.getElementById('balance').innerText = currentUserData.balance;
+        document.getElementById('refer-count').innerText = currentUserData.refers || 0;
+        
+        let watched = currentUserData.dailyAdCount || 0;
+        let remaining = 10 - watched;
+        if(remaining < 0) remaining = 0;
+        document.getElementById('ads-remaining').innerText = remaining;
+
+        if(remaining <= 0) {
+            document.getElementById('btn-watch-ad').disabled = true;
+            document.getElementById('btn-watch-ad').innerText = "আজকের লিমিট শেষ";
+        }
+    }
+
+    function switchPage(pageId) {
+        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        document.getElementById(`page-${pageId}`).classList.add('active');
+        const eventIndex = { 'home': 0, 'tasks': 1, 'withdraw': 2 };
+        document.querySelectorAll('.nav-item')[eventIndex[pageId]].classList.add('active');
+    }
+
+    function handleMethodChange() {
+        const method = document.getElementById('withdraw-method').value;
+        const label = document.getElementById('account-label');
+        const input = document.getElementById('withdraw-account');
+
+        if (method === 'Telegram Wallet') {
+            label.innerText = "টেলিগ্রাম ওয়ালেট অ্যাড্রেস (TON):";
+            input.placeholder = "আপনার TON ওয়ালেট অ্যাড্রেস দিন";
+        } else if(method === 'bKash') {
+            label.innerText = "বিকাশ নম্বর:";
+            input.placeholder = "আপনার বিকাশ নম্বর দিন";
+        } else {
+            label.innerText = "নগদ নম্বর:";
+            input.placeholder = "আপনার নগদ নম্বর দিন";
+        }
+    }
+
+    // --- MONETAG REWARDED AD FUNCTION ---
+    function watchAd() {
+        let watched = currentUserData.dailyAdCount || 0;
+        if (watched >= 10) {
+            alert("দুঃখিত! আপনি আজকের সর্বোচ্চ ১০টি অ্যাড দেখার সীমা অতিক্রম করেছেন। আগামীকাল আবার চেষ্টা করুন।");
+            return;
+        }
+
+        // চেক করা হচ্ছে Monetag এর ফাংশনটি ব্রাউজারে এভেইলেবল আছে কি না
+        if (typeof show_10157334 === 'function') {
+            
+            // আপনার রিওয়ার্ডেড ইন্টারস্টিশিয়াল কোড ট্রিগার করা হলো
+            show_10157334().then(() => {
+                
+                // ইউজার সাকসেসফুলি পুরো অ্যাড দেখার পর শুধুমাত্র এই অংশটি এক্সিকিউট হবে
+                userRef.update({ 
+                    balance: firebase.firestore.FieldValue.increment(5), // ৫ টাকা যোগ হবে
+                    dailyAdCount: firebase.firestore.FieldValue.increment(1),
+                    lastAdDate: getTodayDateStr()
+                }).then(() => {
+                    currentUserData.balance += 5;
+                    currentUserData.dailyAdCount += 1;
+                    updateUI(); // ডিসপ্লে আপডেট
+                    alert("অভিনন্দন! আপনি সফলভাবে সম্পূর্ণ অ্যাডটি দেখেছেন। আপনার অ্যাকাউন্টে ৫ টাকা যোগ করা হয়েছে।");
+                }).catch((err) => {
+                    alert("ডাটাবেস আপডেট করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।");
+                });
+
+            }).catch((err) => {
+                alert("অ্যাড লোড হতে সমস্যা হয়েছে বা আপনি অ্যাডটি কেটে দিয়েছেন!");
+            });
+
+        } else {
+            // যদি আপনার স্ক্রিপ্ট ঠিকমতো লোড না হয় বা ভুল কোড ও জোনে সমস্যা থাকে
+            alert("অ্যাড নেটওয়ার্ক এখনো প্রস্তুত নয়! অনুগ্রহ করে কয়েক সেকেন্ড অপেক্ষা করে আবার চেষ্টা করুন অথবা আপনার স্ক্রিপ্ট কোডটি চেক করুন।");
+        }
+    }
+
+    function loadDynamicTasks() {
+        const container = document.getElementById('dynamic-tasks-list');
+        db.collection("tasks").orderBy("timestamp", "desc").get().then((querySnapshot) => {
+            container.innerHTML = "";
+            if(querySnapshot.empty) {
+                container.innerHTML = `<p style="text-align:center; color:#94a3b8;">বর্তমানে কোনো অতিরিক্ত টাস্ক উপলব্ধ নেই।</p>`;
+                return;
+            }
+
+            querySnapshot.forEach((doc) => {
+                const task = doc.data();
+                const isCompleted = currentUserData.completedTasks && currentUserData.completedTasks.includes(doc.id);
+                
+                container.innerHTML += `
+                    <div class="task-item">
+                        <div>
+                            <strong>${task.title}</strong><br>
+                            <span style="color:var(--success-color); font-size:13px;">পুরস্কার: ${task.reward} টাকা</span>
+                        </div>
+                        <button class="btn" style="width:auto; margin:0; padding:8px 16px; font-size:14px;" 
+                            onclick="completeTask('${doc.id}', '${task.url}', ${task.reward})" ${isCompleted ? 'disabled' : ''}>
+                            ${isCompleted ? 'সম্পন্ন' : 'শুরু করুন'}
+                        </button>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    function copyReferLink() {
+        const copyText = document.getElementById("refer-link");
+        copyText.select();
+        navigator.clipboard.writeText(copyText.value);
+        alert("রেফার লিংক কপি করা হয়েছে!");
+    }
+
+    function completeTask(taskId, targetUrl, reward) {
+        if (currentUserData.completedTasks && currentUserData.completedTasks.includes(taskId)) {
+            alert("আপনি ইতিমধ্যেই এই টাস্কটি সম্পন্ন করেছেন!");
+            return;
+        }
+        window.open(targetUrl, '_blank');
+        
+        alert("টাস্কটি ওপেন হয়েছে। ৫ সেকেন্ড অপেক্ষা করুন...");
+        setTimeout(() => {
+            userRef.update({
+                balance: firebase.firestore.FieldValue.increment(reward),
+                completedTasks: firebase.firestore.FieldValue.arrayUnion(taskId)
+            }).then(() => {
+                currentUserData.balance += reward;
+                if(!currentUserData.completedTasks) currentUserData.completedTasks = [];
+                currentUserData.completedTasks.push(taskId);
+                updateUI();
+                loadDynamicTasks();
+                alert(`অভিনন্দন! টাস্কটি সফলভাবে সম্পন্ন হয়েছে এবং ${reward} টাকা আপনার ব্যালেন্সে যোগ করা হয়েছে।`);
+            });
+        }, 5000);
+    }
+
+    function handleWithdraw() {
+        const method = document.getElementById('withdraw-method').value;
+        const account = document.getElementById('withdraw-account').value;
+        const amount = parseInt(document.getElementById('withdraw-amount').value);
+
+        if (!account || !amount) {
+            alert("অনুগ্রহ করে সব তথ্য সঠিকভাবে পূরণ করুন।");
+            return;
+        }
+        if (amount < 500) {
+            alert("দুঃখিত, সর্বনিম্ন ৫০০ টাকা উত্তোলন করতে পারবেন।");
+            return;
+        }
+        if (currentUserData.balance < amount) {
+            alert("আপনার অ্যাকাউন্টে পর্যাপ্ত ব্যালেন্স নেই।");
+            return;
+        }
+        if ((currentUserData.refers || 0) < 20) {
+            alert("টাকা তুলতে আপনার কমপক্ষে ২০টি সফল রেফার থাকতে হবে।");
+            return;
+        }
+
+        db.collection("withdraws").add({
+            uid: userId,
+            name: userName,
+            method: method,
+            account: account,
+            amount: amount,
+            status: "Pending",
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            userRef.update({
+                balance: firebase.firestore.FieldValue.increment(-amount)
+            }).then(() => {
+                currentUserData.balance -= amount;
+                updateUI();
+                alert("আপনার উইথড্র রিকোয়েস্টটি সফলভাবে জমা হয়েছে। ২৪ ঘণ্টার মধ্যে পেমেন্ট করা হবে।");
+            });
+        });
+    }
 </script>
 </body>
 </html>
