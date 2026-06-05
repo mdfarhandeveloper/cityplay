@@ -218,15 +218,24 @@
 
 <script>
     // --- FIREBASE CONFIGURATION ---
-     const firebaseConfig = {
-    apiKey: "AIzaSyBUanIOP4g6OaJNTEceerm7kgk3oYxvXTs",
-    authDomain: "device-streaming-5c9e8564.firebaseapp.com",
-    databaseURL: "https://device-streaming-5c9e8564-default-rtdb.firebaseio.com",
-    projectId: "device-streaming-5c9e8564",
-    storageBucket: "device-streaming-5c9e8564.firebasestorage.app",
-    messagingSenderId: "482804847649",
-    appId: "1:482804847649:web:55e9dd02aac4aea37cbf60"
-  };
+     // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBUanIOP4g6OaJNTEceerm7kgk3oYxvXTs",
+  authDomain: "device-streaming-5c9e8564.firebaseapp.com",
+  databaseURL: "https://device-streaming-5c9e8564-default-rtdb.firebaseio.com",
+  projectId: "device-streaming-5c9e8564",
+  storageBucket: "device-streaming-5c9e8564.firebasestorage.app",
+  messagingSenderId: "482804847649",
+  appId: "1:482804847649:web:55e9dd02aac4aea37cbf60"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
     
     firebase.initializeApp(firebaseConfig);
