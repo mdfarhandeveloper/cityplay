@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CTX Mini App - Auto Wallet</title>
+    <title>Telegram Mini App - Firebase</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
@@ -26,25 +25,82 @@
         .page { display: none; }
         .page.active { display: block; }
         .btn { background: linear-gradient(135deg, #4ecca3, #23b285); color: #1a1a2e; border: none; padding: 12px 20px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 15px; }
-        input, select { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #0f3460; background: #0f3460; color: #fff; font-size: 16px; }
+        .btn:disabled { background: #4a4a4a; color: #888; cursor: not-allowed; }
+        input, select { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #0f3460; background: #0f3460; color: #fff; }
         .task-item { display: flex; justify-content: space-between; align-items: center; background: #0f3460; padding: 15px; border-radius: 10px; margin-bottom: 12px; }
         .task-info h4 { font-size: 16px; }
         .task-info p { color: #4ecca3; font-size: 13px; }
         .task-btn { background: #4ecca3; color: #1a1a2e; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
         .task-btn:disabled { background: #4a4a4a; color: #888; }
-        .status-badge { background: #e74c3c; color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; display: inline-block; margin-top: 10px;}
-        .status-badge.eligible { background: #2ecc71; }
+        .no-task { text-align: center; color: #95a5a6; padding: 20px; }
+        .instruction-container {
+        padding: 5px;
+        max-width: 500px;
+        margin: auto;
+    }
+    .ins-card {
+        background-color: #16213e;
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        border: 1px solid #0f3460;
+    }
+    .eligible-box {
+        background: linear-gradient(135deg, #16213e, #0f3460);
+        border: 1px solid #4ecca3;
+    }
+    .ins-card h3 {
+        color: #4ecca3;
+        font-size: 18px;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #0f3460;
+        padding-bottom: 8px;
+    }
+    .ins-card p {
+        font-size: 14px;
+        line-height: 1.6;
+        color: #e2e8f0;
+        margin-bottom: 12px;
+    }
+    .ins-card p:last-child {
+        margin-bottom: 0;
+    }
+    .ins-card p span {
+        color: #4ecca3;
+        font-weight: bold;
+        display: inline-block;
+        margin-right: 5px;
+    }
+    .ins-card p small {
+        background: #4ecca3;
+        color: #1a1a2e;
+        font-weight: bold;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 8px;
+        font-size: 12px;
+    }
+    .eligible-box h3 {
+        color: #2ecc71;
+    }
+    .eligible-box p small {
+        background: #2ecc71;
+    }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h2 id="username">Loading...</h2>
-        <p>Welcome to CTX Mini App</p>
+        <p>Welcome to Mini App Earn</p>
     </div>
 
     <div class="container">
-        <!-- HOME PAGE -->
         <div id="home" class="page active">
             <div class="card">
                 <h3>Dashboard</h3>
@@ -58,64 +114,70 @@
                         <p><span id="user-refers">0</span>/20</p>
                     </div>
                 </div>
-                <div style="text-align: center;">
-                    <span id="payout-status" class="status-badge">Not Eligible for Payout</span>
-                </div>
             </div>
+            <div class="card">
+            <div class="instruction-container">
+    <div class="ins-card animate-box">
+        <h3>💰 আয় করার ২ উপায়:</h3>
+        <p><span>টাস্ক পূরণ:</span> অ্যাপের <b>Tasks</b> অপশনে গিয়ে চ্যানেল সাবস্ক্রাইব বা জয়েন করলে প্রতি টাস্কের জন্য নির্দিষ্ট টাকা পাবেন।</p>
+        <p><span>রেফার করা:</span> <b>Refer</b> লিংক বন্ধুদের শেয়ার করলে, প্রতি সফল জয়েনিংয়ে পাবেন ১০ টাকা।</p>
+    </div>
+
+    <div class="ins-card eligible-box">
+        <h3>💳 টাকা পাওয়ার নিয়ম (অটো পেমেন্ট):</h3>
+        <p><small>১.</small> <b>Wallet</b> অপশনে গিয়ে আপনার বিকাশ বা নগদ নম্বর সেভ করে রাখুন।</p>
+        <p><small>২.</small> অ্যাকাউন্টে ১০০০ টাকা এবং সর্বনিম্ন ২০টি রেফার পূর্ণ হলে আপনার নাম অটোমেটিক অ্যাডমিন প্যানেলে চলে যাবে।</p>
+        <p><small>৩.</small> অ্যাডমিন আপনার নম্বরে টাকা পাঠিয়ে দেবেন। (কোনো উইথড্র বাটন চাপতে হবে না)।</p>
+        <p><small>৪.</small> ১ম বার ২০টি রেফার হয়ে গেলে, পরেরবার শুধু টাস্ক দিয়ে ১০০০ টাকা বানালেই আবার পেমেন্ট পাবেন, নতুন করে রেফার লাগবে না।</p>
+    </div>
+</div>
+
+</div>
         </div>
 
-        <!-- REFER PAGE -->
         <div id="refer" class="page">
             <div class="card">
                 <h3>Refer & Earn</h3>
                 <input type="text" id="refer-link" readonly value="">
                 <button class="btn" onclick="copyRefer()">Copy Link</button>
-
-            
+                <button class="btn" style="background: #3498db; color: white;" onclick="simulateReferClick()">Simulate 1 Refer Click</button>
             </div>
         </div>
 
-        <!-- TASK PAGE -->
         <div id="tasks" class="page">
             <div class="card">
                 <h3>Available Tasks</h3>
-                <div id="task-container" style="margin-top: 15px;"></div>
+                <div id="task-container" style="margin-top: 15px;">
+                    </div>
             </div>
         </div>
 
-        <!-- WALLET SETTING PAGE -->
         <div id="withdraw" class="page">
             <div class="card">
-                <h3>Payment Wallet Setup</h3>
-                <p style="color: #bdc3c7; font-size: 14px;">Apnar bKash ba Nagad number add kore rakhun. Target (1000 Tk & 20 Refers) purno hole apni auto payment peye jaben.</p>
-                
-                <form id="wallet-form" onsubmit="saveWallet(event)">
-                    <label style="display:block; margin-top:15px;">Method:</label>
-                    <select id="wallet-method">
-                        <option value="bKash">bKash</option>
-                        <option value="Nagad">Nagad</option>
+                <h3>Withdraw Earnings</h3>
+                <p>Minimum Withdraw: 1000 Taka</p>
+                <form id="withdraw-form" onsubmit="handleWithdraw(event)">
+                    <select id="withdraw-method">
+                        <option value="bkash">bKash</option>
+                        <option value="nagad">Nagad</option>
                     </select>
-                    
-                    <label style="display:block; margin-top:15px;">Phone Number:</label>
-                    <input type="tel" id="wallet-phone" placeholder="01XXXXXXXXX" required pattern="[0-9]{11}">
-                    
-                    <button type="submit" class="btn">Update & Save Number</button>
+                    <input type="tel" id="withdraw-phone" placeholder="017XXXXXXXX" required pattern="[0-9]{11}">
+                    <button type="submit" class="btn" id="withdraw-submit-btn">Withdraw Request</button>
                 </form>
-                <p id="wallet-msg" style="margin-top: 15px; text-align: center; color: #4ecca3; font-weight: bold;"></p>
+                <p id="withdraw-msg" style="margin-top: 15px; text-align: center; font-weight: bold;"></p>
             </div>
         </div>
     </div>
 
-    <!-- Navigation -->
     <div class="navbar">
         <div class="nav-item active" onclick="switchTab('home', this)"><span>🏠</span>Home</div>
         <div class="nav-item" onclick="switchTab('refer', this)"><span>👥</span>Refer</div>
         <div class="nav-item" onclick="switchTab('tasks', this)"><span>📋</span>Tasks</div>
-        <div class="nav-item" onclick="switchTab('withdraw', this)"><span>💳</span>Wallet</div>
+        <div class="nav-item" onclick="switchTab('withdraw', this)"><span>💰</span>Withdraw</div>
     </div>
 
     <script>
-        // ⚠️ FIREBASE CONFIGURATION BOSHAN
+        // ⚠️ APNAR FIREBASE CONFIGURATION EKHANE BOSHAN
         const firebaseConfig = {
             apiKey: "AIzaSyCKITS8pdaBi1-icFyZ4CgPxsJe60uszio",
             authDomain: "ctx-9c92f.firebaseapp.com",
@@ -127,10 +189,10 @@
             measurementId: "G-TEEZQZLPMD"
         };
         
-        
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
+        // User Identity from Telegram
         let tg = window.Telegram?.WebApp;
         let userId = "demo_user_123"; 
         let userName = "Demo User";
@@ -141,36 +203,31 @@
             userName = tg.initDataUnsafe.user.first_name;
         }
         document.getElementById('username').innerText = userName;
-        document.getElementById('refer-link').value = "https://t.me/ctxcoin_bot/CTX?startapp=" + userId;
+        document.getElementById('refer-link').value = "https://t.me/ctxcoin_bot/CTX?start=" + userId;
 
-        // Sync User Data
+        // Firebase theke user data real-time e track kora
         database.ref('users/' + userId).on('value', (snapshot) => {
             let data = snapshot.val();
             if(!data) {
-                data = { name: userName, balance: 0, refers: 0, completedTasks: "", method: "bKash", phone: "Not Set" };
+                // Notun user hole database e set hobe prothome 0 data diye
+                data = { name: userName, balance: 0, refers: 0, completedTasks: "" };
                 database.ref('users/' + userId).set(data);
             }
             
             document.getElementById('user-balance').innerText = data.balance || 0;
             document.getElementById('user-refers').innerText = data.refers || 0;
-            
-            // Check Eligibility and auto status update
-            const statusBadge = document.getElementById('payout-status');
-            if((data.balance || 0) >= 1000 && (data.refers || 0) >= 20) {
-                statusBadge.innerText = "Eligible for Auto Payout List!";
-                statusBadge.className = "status-badge eligible";
-            } else {
-                statusBadge.innerText = "Not Eligible (Need 1000 Tk & 20 Refers)";
-                statusBadge.className = "status-badge";
-            }
 
-            // Set inputs if already saved
-            if(data.phone !== "Not Set") {
-                document.getElementById('wallet-method').value = data.method;
-                document.getElementById('wallet-phone').value = data.phone;
-                document.getElementById('wallet-msg').innerText = "Saved: " + data.method + " (" + data.phone + ")";
+            // Withdraw eligibility check
+            const withdrawBtn = document.getElementById('withdraw-submit-btn');
+            if((data.refers || 0) < 20 || (data.balance || 0) < 1000) {
+                withdrawBtn.disabled = true;
+                withdrawBtn.innerText = "Locked (Need 20 Refers & 1000 Tk)";
+            } else {
+                withdrawBtn.disabled = false;
+                withdrawBtn.innerText = "Withdraw Request";
             }
             
+            // Task list refresh
             loadTasks(data.completedTasks || "");
         });
 
@@ -181,37 +238,34 @@
             element.classList.add('active');
         }
 
-        function saveWallet(e) {
-            e.preventDefault();
-            const method = document.getElementById('wallet-method').value;
-            const phone = document.getElementById('wallet-phone').value;
-            
-            database.ref('users/' + userId).update({
-                method: method,
-                phone: phone
-            }).then(() => {
-                alert("Wallet number updated successfully!");
-            });
-        }
-
+        // Real-time task rendering (kali thakle faka dekhabe, admin upload dile ekhane show korbe)
         function loadTasks(completedTasksString) {
             database.ref('tasks').once('value', (snapshot) => {
                 const container = document.getElementById('task-container');
                 container.innerHTML = '';
                 let tasks = snapshot.val();
+                
                 if(!tasks) {
-                    container.innerHTML = `<div style="text-align:center;color:#95a5a6;padding:20px;">No tasks available.</div>`;
+                    container.innerHTML = `<div class="no-task">No tasks available right now. Admin has not uploaded any tasks yet!</div>`;
                     return;
                 }
+
                 let completedList = completedTasksString.split(',').filter(Boolean);
+
                 Object.keys(tasks).forEach(taskId => {
                     let task = tasks[taskId];
                     let isDone = completedList.includes(taskId);
+                    
                     const taskDiv = document.createElement('div');
                     taskDiv.className = 'task-item';
                     taskDiv.innerHTML = `
-                        <div class="task-info"><h4>${task.title}</h4><p>+${task.amount} Tk</p></div>
-                        <button class="task-btn" ${isDone ? 'disabled' : ''} onclick="doTask('${task.url}', '${taskId}', ${task.amount})">${isDone ? 'Done' : 'Start'}</button>
+                        <div class="task-info">
+                            <h4>${task.title}</h4>
+                            <p>+${task.amount} Taka</p>
+                        </div>
+                        <button class="task-btn" ${isDone ? 'disabled' : ''} onclick="doTask('${task.url}', '${taskId}', ${task.amount})">
+                            ${isDone ? 'Done' : 'Start'}
+                        </button>
                     `;
                     container.appendChild(taskDiv);
                 });
@@ -225,32 +279,59 @@
                     let user = snapshot.val();
                     let completed = user.completedTasks || "";
                     let completedList = completed.split(',').filter(Boolean);
+                    
                     if(!completedList.includes(taskId)) {
                         completedList.push(taskId);
+                        let newCompletedString = completedList.join(',');
+                        let newBalance = (user.balance || 0) + Number(amount);
+                        
                         database.ref('users/' + userId).update({
-                            balance: (user.balance || 0) + Number(amount),
-                            completedTasks: completedList.join(',')
+                            balance: newBalance,
+                            completedTasks: newCompletedString
                         });
+                        alert(`Task Completed! +${amount} Tk added.`);
                     }
                 });
             }, 2000);
         }
 
-        // Real Telegram Bot logic example
-let currentRefers = snapshot.val().refers || 0;
-let currentBalance = snapshot.val().balance || 0;
-
-// Real bot database-e hit kore 1 refer barabe ebong 10 taka dibe
-userRefReférer.update({
-    refers: currentRefers + 1,
-    balance: currentBalance + 10
-});
+        function simulateReferClick() {
+            database.ref('users/' + userId).once('value', (snapshot) => {
+                let user = snapshot.val();
+                let currentRefers = user.refers || 0;
+                database.ref('users/' + userId).update({ refers: currentRefers + 1 });
+            });
+        }
 
         function copyRefer() {
             const copyText = document.getElementById("refer-link");
             copyText.select();
             navigator.clipboard.writeText(copyText.value);
             alert("Refer link copied!");
+        }
+
+        function handleWithdraw(e) {
+            e.preventDefault();
+            const method = document.getElementById('withdraw-method').value;
+            const phone = document.getElementById('withdraw-phone').value;
+            
+            database.ref('users/' + userId).once('value', (snapshot) => {
+                let user = snapshot.val();
+                if(user.balance >= 1000 && user.refers >= 20) {
+                    let withdrawRef = database.ref('withdraw_requests').push();
+                    withdrawRef.set({
+                        userId: userId,
+                        name: user.name,
+                        method: method,
+                        phone: phone,
+                        amount: user.balance,
+                        status: 'Pending'
+                    });
+
+                    database.ref('users/' + userId).update({ balance: 0 });
+                    document.getElementById('withdraw-msg').innerText = "Withdraw request submitted successfully!";
+                }
+            });
         }
     </script>
 </body>
