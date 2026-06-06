@@ -138,21 +138,29 @@
             userName = tg.initDataUnsafe.user.first_name;
         }
         document.getElementById('username').innerText = userName;
-        document.getElementById('refer-link').value = "https://t.me/ctxcoin_bot/CTX?startapp=" + userId;
+        document.getElementById('refer-link').value = "https://t.me/ctxcoin_bot?startapp=" + userId;
         // =====================
 // REFER SYSTEM
 // =====================
 
-const urlParams = new URLSearchParams(window.location.search);
-const referrerId = urlParams.get("startapp");
+// =====================
+// TELEGRAM REFERRAL SYSTEM
+// =====================
 
-database.ref('users/' + userId).once('value', (snapshot) => {
+let referrerId = null;
+
+if (tg && tg.initDataUnsafe) {
+    referrerId = tg.initDataUnsafe.start_param || null;
+}
+
+database.ref('users/' + userId).once('value')
+.then((snapshot) => {
 
     let user = snapshot.val();
 
     if (!user) {
 
-        database.ref('users/' + userId).set({
+        const newUser = {
             name: userName,
             balance: 0,
             refers: 0,
@@ -160,7 +168,9 @@ database.ref('users/' + userId).once('value', (snapshot) => {
             method: "bKash",
             phone: "Not Set",
             referredBy: referrerId || ""
-        });
+        };
+
+        database.ref('users/' + userId).set(newUser);
 
         if (
             referrerId &&
@@ -168,21 +178,14 @@ database.ref('users/' + userId).once('value', (snapshot) => {
         ) {
 
             database.ref('users/' + referrerId)
-            .once('value')
-            .then((refSnap) => {
-
-                let refUser = refSnap.val();
+            .transaction((refUser) => {
 
                 if (refUser) {
-
-                    database.ref('users/' + referrerId)
-                    .update({
-                        balance: (refUser.balance || 0) + 10,
-                        refers: (refUser.refers || 0) + 1
-                    });
-
+                    refUser.balance = (refUser.balance || 0) + 10;
+                    refUser.refers = (refUser.refers || 0) + 1;
                 }
 
+                return refUser;
             });
 
         }
@@ -193,10 +196,7 @@ database.ref('users/' + userId).once('value', (snapshot) => {
         // Sync User Data
         database.ref('users/' + userId).on('value', (snapshot) => {
             let data = snapshot.val();
-            if(!data) {
-                data = { name: userName, balance: 0, refers: 0, completedTasks: "", method: "bKash", phone: "Not Set" };
-                database.ref('users/' + userId).set(data);
-            }
+            if(!data) return;
             
             document.getElementById('user-balance').innerText = data.balance || 0;
             document.getElementById('user-refers').innerText = data.refers || 0;
