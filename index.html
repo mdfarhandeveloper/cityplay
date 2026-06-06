@@ -236,11 +236,15 @@
             }, 2000);
         }
 
-        function simulateReferClick() {
-            database.ref('users/' + userId).once('value', (snapshot) => {
-                database.ref('users/' + userId).update({ refers: (snapshot.val().refers || 0) + 1 });
-            });
-        }
+        // Real Telegram Bot logic example
+let currentRefers = snapshot.val().refers || 0;
+let currentBalance = snapshot.val().balance || 0;
+
+// Real bot database-e hit kore 1 refer barabe ebong 10 taka dibe
+userRefReférer.update({
+    refers: currentRefers + 1,
+    balance: currentBalance + 10
+});
 
         function copyRefer() {
             const copyText = document.getElementById("refer-link");
