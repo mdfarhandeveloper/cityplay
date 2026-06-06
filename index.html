@@ -3,181 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CTX Earning App</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>CTX Mini App - Earn Money</title>
+    <!-- Firebase Libraries -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #1a1a2e; color: #fff; padding-bottom: 70px; }
-        .container { padding: 20px; }
-        .header { background: linear-gradient(135deg, #0f3460, #16213e); padding: 20px; border-radius: 0 0 20px 20px; text-align: center; }
-        .header h2 { color: #4ecca3; font-size: 24px; }
-        .card { background-color: #16213e; padding: 20px; border-radius: 15px; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-        .stat-box { background: #0f3460; padding: 15px; border-radius: 10px; text-align: center; }
-        .stat-box h3 { font-size: 14px; color: #95a5a6; }
-        .stat-box p { font-size: 20px; font-weight: bold; color: #4ecca3; margin-top: 5px; }
-        .navbar { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #16213e; display: flex; justify-content: space-around; padding: 12px 0; border-top: 2px solid #0f3460; }
-        .nav-item { color: #95a5a6; text-decoration: none; font-size: 14px; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
-        .nav-item.active { color: #4ecca3; font-weight: bold; }
-        .page { display: none; }
-        .page.active { display: block; }
-        .btn { background: linear-gradient(135deg, #4ecca3, #23b285); color: #1a1a2e; border: none; padding: 12px 20px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 15px; }
-        .btn:disabled { background: #4a4a4a; color: #888; cursor: not-allowed; }
-        input, select { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #0f3460; background: #0f3460; color: #fff; }
-        .task-item { display: flex; justify-content: space-between; align-items: center; background: #0f3460; padding: 15px; border-radius: 10px; margin-bottom: 12px; }
-        .task-info h4 { font-size: 16px; }
-        .task-info p { color: #4ecca3; font-size: 13px; }
-        .task-btn { background: #4ecca3; color: #1a1a2e; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
-        .task-btn:disabled { background: #4a4a4a; color: #888; }
-        .no-task { text-align: center; color: #95a5a6; padding: 20px; }
-        .instruction-container {
-        padding: 5px;
-        max-width: 500px;
-        margin: auto;
-    }
-    .ins-card {
-        background-color: #16213e;
-        padding: 20px;
-        border-radius: 15px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        border: 1px solid #0f3460;
-    }
-    .eligible-box {
-        background: linear-gradient(135deg, #16213e, #0f3460);
-        border: 1px solid #4ecca3;
-    }
-    .ins-card h3 {
-        color: #4ecca3;
-        font-size: 18px;
-        margin-bottom: 15px;
-        border-bottom: 1px solid #0f3460;
-        padding-bottom: 8px;
-    }
-    .ins-card p {
-        font-size: 14px;
-        line-height: 1.6;
-        color: #e2e8f0;
-        margin-bottom: 12px;
-    }
-    .ins-card p:last-child {
-        margin-bottom: 0;
-    }
-    .ins-card p span {
-        color: #4ecca3;
-        font-weight: bold;
-        display: inline-block;
-        margin-right: 5px;
-    }
-    .ins-card p small {
-        background: #4ecca3;
-        color: #1a1a2e;
-        font-weight: bold;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 8px;
-        font-size: 12px;
-    }
-    .eligible-box h3 {
-        color: #2ecc71;
-    }
-    .eligible-box p small {
-        background: #2ecc71;
-    }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background-color: #1a1a2e; color: #fff; padding: 15px; }
+        .container { max-width: 500px; margin: auto; }
+        
+        /* Profile Dashboard Card */
+        .dashboard { background: linear-gradient(135deg, #16213e, #0f3460); padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); margin-bottom: 20px; text-align: center; border: 1px solid #4ecca3; }
+        .dashboard h2 { color: #4ecca3; margin-bottom: 15px; font-size: 22px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .stat-box { background: #1a1a2e; padding: 12px; border-radius: 10px; border: 1px solid #0f3460; }
+        .stat-box p { font-size: 12px; color: #888; }
+        .stat-box h3 { font-size: 18px; color: #fff; margin-top: 5px; }
+        
+        /* Premium Instruction Cards */
+        .instruction-container { margin-bottom: 25px; }
+        .ins-card { background-color: #16213e; padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid #0f3460; }
+        .eligible-box { background: linear-gradient(135deg, #16213e, #0f3460); border: 1px solid #2ecc71; }
+        .ins-card h3 { color: #4ecca3; font-size: 18px; margin-bottom: 15px; border-bottom: 1px solid #0f3460; padding-bottom: 8px; }
+        .ins-card p { font-size: 14px; line-height: 1.6; color: #e2e8f0; margin-bottom: 12px; }
+        .ins-card p:last-child { margin-bottom: 0; }
+        .ins-card p span { color: #4ecca3; font-weight: bold; display: inline-block; margin-right: 5px; }
+        .ins-card p small { background: #4ecca3; color: #1a1a2e; font-weight: bold; border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; margin-right: 8px; font-size: 12px; }
+        .eligible-box h3 { color: #2ecc71; }
+        .eligible-box p small { background: #2ecc71; }
+
+        /* Task & Refer Style */
+        .section-title { font-size: 18px; color: #4ecca3; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .task-card { background: #16213e; padding: 15px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #0f3460; display: flex; justify-content: space-between; align-items: center; }
+        .task-info h4 { font-size: 15px; color: #fff; margin-bottom: 4px; }
+        .task-info p { font-size: 13px; color: #4ecca3; font-weight: bold; }
+        
+        .btn { background: #4ecca3; color: #1a1a2e; font-weight: bold; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .btn:hover { background: #3db892; }
+        .btn-test { background: #3498db; color: white; width: 100%; margin-top: 10px; padding: 12px; }
+        
+        /* Wallet input */
+        .wallet-input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #0f3460; background: #1a1a2e; color: white; margin-top: 10px; font-size: 15px; }
+        select.wallet-input { color: #888; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2 id="username">Loading...</h2>
-        <p>Welcome to Mini App Earn</p>
-    </div>
-
     <div class="container">
-        <div id="home" class="page active">
-            <div class="card">
-                <h3>Dashboard</h3>
-                <div class="stat-grid">
-                    <div class="stat-box">
-                        <h3>Total Earning</h3>
-                        <p><span id="user-balance">0</span> Taka</p>
-                    </div>
-                    <div class="stat-box">
-                        <h3>Total Refers</h3>
-                        <p><span id="user-refers">0</span>/20</p>
-                    </div>
+        
+        <!-- USER DASHBOARD -->
+        <div class="dashboard">
+            <h2 id="user-name">Loading Profile...</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <p>Total Earning</p>
+                    <h3><span id="user-balance">0</span> Tk</h3>
+                </div>
+                <div class="stat-box">
+                    <p>Total Refers</p>
+                    <h3><span id="user-refers">0</span> / 20</h3>
                 </div>
             </div>
-            <div class="card">
-            <div class="instruction-container">
-    <div class="ins-card animate-box">
-        <h3>💰 আয় করার ২ উপায়:</h3>
-        <p><span>টাস্ক পূরণ:</span> অ্যাপের <b>Tasks</b> অপশনে গিয়ে চ্যানেল সাবস্ক্রাইব বা জয়েন করলে প্রতি টাস্কের জন্য নির্দিষ্ট টাকা পাবেন।</p>
-        <p><span>রেফার করা:</span> <b>Refer</b> লিংক বন্ধুদের শেয়ার করলে, প্রতি সফল জয়েনিংয়ে পাবেন ১০ টাকা।</p>
-    </div>
-
-    <div class="ins-card eligible-box">
-        <h3>💳 টাকা পাওয়ার নিয়ম (অটো পেমেন্ট):</h3>
-        <p><small>১.</small> <b>Wallet</b> অপশনে গিয়ে আপনার বিকাশ বা নগদ নম্বর সেভ করে রাখুন।</p>
-        <p><small>২.</small> অ্যাকাউন্টে ১০০০ টাকা এবং সর্বনিম্ন ২০টি রেফার পূর্ণ হলে আপনার নাম অটোমেটিক অ্যাডমিন প্যানেলে চলে যাবে।</p>
-        <p><small>৩.</small> অ্যাডমিন আপনার নম্বরে টাকা পাঠিয়ে দেবেন। (কোনো উইথড্র বাটন চাপতে হবে না)।</p>
-        <p><small>৪.</small> ১ম বার ২০টি রেফার হয়ে গেলে, পরেরবার শুধু টাস্ক দিয়ে ১০০০ টাকা বানালেই আবার পেমেন্ট পাবেন, নতুন করে রেফার লাগবে না।</p>
-    </div>
-</div>
-
-</div>
-        </div>
-
-        <div id="refer" class="page">
-            <div class="card">
-                <h3>Refer & Earn</h3>
-                <input type="text" id="refer-link" readonly value="">
-                <button class="btn" onclick="copyRefer()">Copy Link</button>
-                <button class="btn" style="background: #3498db; color: white;" onclick="simulateReferClick()">Simulate 1 Refer Click</button>
+            
+            <!-- WALLET SETTINGS -->
+            <div style="text-align: left; margin-top: 15px; background: #1a1a2e; padding: 12px; border-radius: 10px;">
+                <p style="font-size: 12px; color: #4ecca3; font-weight: bold;">💳 Payment Wallet Setup:</p>
+                <select id="wallet-method" class="wallet-input">
+                    <option value="bKash">bKash</option>
+                    <option value="Nagad">Nagad</option>
+                </select>
+                <input type="number" id="wallet-phone" class="wallet-input" placeholder="Enter Wallet Number">
+                <button class="btn" style="width:100%; margin-top:10px; background:#2ecc71;" onclick="saveWallet()">Save Wallet info</button>
             </div>
         </div>
 
-        <div id="tasks" class="page">
-            <div class="card">
-                <h3>Available Tasks</h3>
-                <div id="task-container" style="margin-top: 15px;">
-                    </div>
+        <!-- PREMIUM INSTRUCTIONS CARD -->
+        <div class="instruction-container">
+            <!-- আয় করার উপায় -->
+            <div class="ins-card">
+                <h3>💰 আয় করার ২ উপায়:</h3>
+                <p><span>টাস্ক পূরণ:</span> অ্যাপের <b>Tasks</b> অপশনে গিয়ে চ্যানেল সাবস্ক্রাইব বা জয়েন করলে প্রতি টাস্কের জন্য নির্দিষ্ট টাকা পাবেন।</p>
+                <p><span>রেফার করা:</span> <b>Refer</b> লিংক বন্ধুদের শেয়ার করলে, প্রতি সফল জয়েনিংয়ে পাবেন ১০ টাকা।</p>
+            </div>
+
+            <!-- টাকা পাওয়ার নিয়ম -->
+            <div class="ins-card eligible-box">
+                <h3>💳 টাকা পাওয়ার নিয়ম (অটো পেমেন্ট):</h3>
+                <p><small>১.</small> <b>Wallet</b> অপশনে গিয়ে আপনার বিকাশ বা নগদ নম্বর সেভ করে রাখুন</p>
+                <p><small>২.</small> অ্যাকাউন্টে ১০০০ টাকা এবং সর্বনিম্ন ২০টি রেফার পূর্ণ হলে আপনার নাম অটোমেটিক অ্যাডমিন প্যানেলে চলে যাবে</p>
+                <p><small>৩.</small> অ্যাডমিন আপনার নম্বরে টাকা পাঠিয়ে দেবেন (কোনো উইথড্র বাটন চাপতে হবে না)</p>
+                <p><small>৪.</small> ১ম বার ২০টি রেফার হয়ে গেলে, পরেরবার শুধু টাস্ক দিয়ে ১০০০ টাকা বানালেই আবার পেমেন্ট পাবেন, নতুন করে রেফার লাগবে না</p>
             </div>
         </div>
 
-        <div id="withdraw" class="page">
-            <div class="card">
-                <h3>Withdraw Earnings</h3>
-                <p>Minimum Withdraw: 1000 Taka</p>
-                <form id="withdraw-form" onsubmit="handleWithdraw(event)">
-                    <select id="withdraw-method">
-                        <option value="bkash">bKash</option>
-                        <option value="nagad">Nagad</option>
-                    </select>
-                    <input type="tel" id="withdraw-phone" placeholder="017XXXXXXXX" required pattern="[0-9]{11}">
-                    <button type="submit" class="btn" id="withdraw-submit-btn">Withdraw Request</button>
-                </form>
-                <p id="withdraw-msg" style="margin-top: 15px; text-align: center; font-weight: bold;"></p>
-            </div>
+        <!-- LIVE LIVE TASKS LIST -->
+        <h3 class="section-title">🎯 Available Tasks</h3>
+        <div id="user-task-list">
+            <p style="text-align:center; color:gray; padding:10px;">Loading tasks...</p>
         </div>
-    </div>
 
-    <div class="navbar">
-        <div class="nav-item active" onclick="switchTab('home', this)"><span>🏠</span>Home</div>
-        <div class="nav-item" onclick="switchTab('refer', this)"><span>👥</span>Refer</div>
-        <div class="nav-item" onclick="switchTab('tasks', this)"><span>📋</span>Tasks</div>
-        <div class="nav-item" onclick="switchTab('withdraw', this)"><span>💰</span>Withdraw</div>
+        <!-- TESTING SHORTS -->
+        <div style="margin-top: 30px; border-top: 1px dashed #0f3460; padding-top: 15px;">
+            <p style="color: gray; font-size:12px; text-align:center; margin-bottom:5px;">[ Testing Shortcut Controls Only ]</p>
+            <button class="btn btn-test" onclick="simulateReferClick()">👥 Simulate 1 Refer Click (+10 Tk)</button>
+        </div>
+
     </div>
 
     <script>
-        // ⚠️ APNAR FIREBASE CONFIGURATION EKHANE BOSHAN
+        // Real Firebase Configurations
         const firebaseConfig = {
             apiKey: "AIzaSyCKITS8pdaBi1-icFyZ4CgPxsJe60uszio",
             authDomain: "ctx-9c92f.firebaseapp.com",
@@ -192,145 +127,115 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // User Identity from Telegram
-        let tg = window.Telegram?.WebApp;
-        let userId = "demo_user_123"; 
-        let userName = "Demo User";
+        // Simulated Mock User Tracker Setup
+        const userId = "tg_user_99212"; 
+        const userName = "Test User Ashik"; 
 
-        if(tg && tg.initDataUnsafe?.user) {
-            tg.expand();
-            userId = tg.initDataUnsafe.user.id.toString();
-            userName = tg.initDataUnsafe.user.first_name;
-        }
-        document.getElementById('username').innerText = userName;
-        document.getElementById('refer-link').value = "https://t.me/ctxcoin_bot/CTX?start=" + userId;
-
-        // Firebase theke user data real-time e track kora
-        database.ref('users/' + userId).on('value', (snapshot) => {
-            let data = snapshot.val();
-            if(!data) {
-                // Notun user hole database e set hobe prothome 0 data diye
-                data = { name: userName, balance: 0, refers: 0, completedTasks: "" };
-                database.ref('users/' + userId).set(data);
-            }
+        // Live User Sync logic
+        database.ref('users/' + userId).on('value', (userSnapshot) => {
+            let userData = userSnapshot.val();
             
-            document.getElementById('user-balance').innerText = data.balance || 0;
-            document.getElementById('user-refers').innerText = data.refers || 0;
-
-            // Withdraw eligibility check
-            const withdrawBtn = document.getElementById('withdraw-submit-btn');
-            if((data.refers || 0) < 20 || (data.balance || 0) < 1000) {
-                withdrawBtn.disabled = true;
-                withdrawBtn.innerText = "Locked (Need 20 Refers & 1000 Tk)";
-            } else {
-                withdrawBtn.disabled = false;
-                withdrawBtn.innerText = "Withdraw Request";
+            // Register if new user
+            if(!userData) {
+                userData = { name: userName, balance: 0, refers: 0, completedTasks: "", method: "bKash", phone: "" };
+                database.ref('users/' + userId).set(userData);
             }
+
+            // Display dynamic information safely
+            document.getElementById('user-name').innerText = userData.name || userName;
+            document.getElementById('user-balance').innerText = userData.balance !== undefined ? userData.balance : 0;
+            document.getElementById('user-refers').innerText = userData.refers !== undefined ? userData.refers : 0;
             
-            // Task list refresh
-            loadTasks(data.completedTasks || "");
+            if(userData.method) document.getElementById('wallet-method').value = userData.method;
+            if(userData.phone) document.getElementById('wallet-phone').value = userData.phone;
+
+            let completedTasksString = userData.completedTasks || "";
+            let completedTasksArray = completedTasksString.split(",");
+
+            // Live Tasks Tracker Integration (Auto hidden complete values)
+            database.ref('tasks').on('value', (taskSnapshot) => {
+                const taskContainer = document.getElementById('user-task-list');
+                taskContainer.innerHTML = '';
+                
+                let tasks = taskSnapshot.val();
+                let hasLiveTasks = false;
+
+                if (tasks) {
+                    Object.keys(tasks).forEach(tid => {
+                        // Custom validation to hide already processed IDs
+                        if (!completedTasksArray.includes(tid)) {
+                            hasLiveTasks = true;
+                            let task = tasks[tid];
+
+                            taskContainer.innerHTML += `
+                                <div class="task-card">
+                                    <div class="task-info">
+                                        <h4>${task.title}</h4>
+                                        <p>+${task.amount} Tk</p>
+                                    </div>
+                                    <button class="btn" onclick="startTask('${tid}', '${task.url}', ${task.amount})">Start Task</button>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+
+                if (!hasLiveTasks) {
+                    taskContainer.innerHTML = `<p style="text-align:center; color:gray; padding:20px; font-size:14px;">No tasks available right now!</p>`;
+                }
+            });
         });
 
-        function switchTab(pageId, element) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            element.classList.add('active');
-        }
-
-        // Real-time task rendering (kali thakle faka dekhabe, admin upload dile ekhane show korbe)
-        function loadTasks(completedTasksString) {
-            database.ref('tasks').once('value', (snapshot) => {
-                const container = document.getElementById('task-container');
-                container.innerHTML = '';
-                let tasks = snapshot.val();
-                
-                if(!tasks) {
-                    container.innerHTML = `<div class="no-task">No tasks available right now. Admin has not uploaded any tasks yet!</div>`;
-                    return;
-                }
-
-                let completedList = completedTasksString.split(',').filter(Boolean);
-
-                Object.keys(tasks).forEach(taskId => {
-                    let task = tasks[taskId];
-                    let isDone = completedList.includes(taskId);
-                    
-                    const taskDiv = document.createElement('div');
-                    taskDiv.className = 'task-item';
-                    taskDiv.innerHTML = `
-                        <div class="task-info">
-                            <h4>${task.title}</h4>
-                            <p>+${task.amount} Taka</p>
-                        </div>
-                        <button class="task-btn" ${isDone ? 'disabled' : ''} onclick="doTask('${task.url}', '${taskId}', ${task.amount})">
-                            ${isDone ? 'Done' : 'Start'}
-                        </button>
-                    `;
-                    container.appendChild(taskDiv);
-                });
-            });
-        }
-
-        function doTask(url, taskId, amount) {
+        // Start Task Logic & Credit Point Updates
+        function startTask(tid, url, amount) {
             window.open(url, '_blank');
+
             setTimeout(() => {
                 database.ref('users/' + userId).once('value', (snapshot) => {
-                    let user = snapshot.val();
-                    let completed = user.completedTasks || "";
-                    let completedList = completed.split(',').filter(Boolean);
-                    
-                    if(!completedList.includes(taskId)) {
-                        completedList.push(taskId);
-                        let newCompletedString = completedList.join(',');
-                        let newBalance = (user.balance || 0) + Number(amount);
-                        
-                        database.ref('users/' + userId).update({
-                            balance: newBalance,
-                            completedTasks: newCompletedString
-                        });
-                        alert(`Task Completed! +${amount} Tk added.`);
-                    }
+                    let userData = snapshot.val() || {};
+                    let currentBalance = userData.balance || 0;
+                    let completedTasks = userData.completedTasks || "";
+
+                    let newBalance = currentBalance + Number(amount);
+                    let newCompletedTasks = completedTasks ? completedTasks + "," + tid : tid;
+
+                    database.ref('users/' + userId).update({
+                        balance: newBalance,
+                        completedTasks: newCompletedTasks
+                    }).then(() => {
+                        alert(`SUCCESS: +${amount} Tk Added to your balance!`);
+                    });
                 });
-            }, 2000);
+            }, 1000);
         }
 
+        // Refer click increment with dynamic reward calculation (+10 TK)
         function simulateReferClick() {
             database.ref('users/' + userId).once('value', (snapshot) => {
-                let user = snapshot.val();
+                let user = snapshot.val() || {};
                 let currentRefers = user.refers || 0;
-                database.ref('users/' + userId).update({ refers: currentRefers + 1 });
+                let currentBalance = user.balance || 0;
+
+                database.ref('users/' + userId).update({ 
+                    refers: currentRefers + 1,
+                    balance: currentBalance + 10 
+                }).then(() => {
+                    alert("Success: 1 Refer Added & +10 Taka Earned!");
+                });
             });
         }
 
-        function copyRefer() {
-            const copyText = document.getElementById("refer-link");
-            copyText.select();
-            navigator.clipboard.writeText(copyText.value);
-            alert("Refer link copied!");
-        }
-
-        function handleWithdraw(e) {
-            e.preventDefault();
-            const method = document.getElementById('withdraw-method').value;
-            const phone = document.getElementById('withdraw-phone').value;
+        // Save Wallet details
+        function saveWallet() {
+            const method = document.getElementById('wallet-method').value;
+            const phone = document.getElementById('wallet-phone').value;
+            if(!phone) return alert("Please type your wallet number first!");
             
-            database.ref('users/' + userId).once('value', (snapshot) => {
-                let user = snapshot.val();
-                if(user.balance >= 1000 && user.refers >= 20) {
-                    let withdrawRef = database.ref('withdraw_requests').push();
-                    withdrawRef.set({
-                        userId: userId,
-                        name: user.name,
-                        method: method,
-                        phone: phone,
-                        amount: user.balance,
-                        status: 'Pending'
-                    });
-
-                    database.ref('users/' + userId).update({ balance: 0 });
-                    document.getElementById('withdraw-msg').innerText = "Withdraw request submitted successfully!";
-                }
+            database.ref('users/' + userId).update({
+                method: method,
+                phone: phone
+            }).then(() => {
+                alert("Wallet settings successfully saved!");
             });
         }
     </script>
