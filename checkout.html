@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>চেকআউট — শাড়ি কম্বো সেট</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="checkout-header">
+  <div class="container checkout-header__inner">
+    <a href="index.html" class="back-link">← হোমে ফিরুন</a>
+    <span class="secure-note">🔒 নিরাপদ চেকআউট</span>
+  </div>
+</div>
+
+<div class="container">
+  <div class="checkout-layout">
+    <div class="checkout-card">
+      <h1 class="checkout-card__title" data-field="checkoutHeading">অর্ডার তথ্য দিন</h1>
+
+      <form id="checkoutForm" novalidate>
+        <div class="form-group">
+          <label class="form-label">শাড়ির রঙ</label>
+          <div id="selectedColorDisplay" class="color-display-card">
+            <span class="color-display__name"></span>
+            <span class="color-display__chip"></span>
+          </div>
+          <div class="checkout-color-variants mt-4">
+            <div class="color-option">
+              <button type="button" class="checkout-color-variant active" data-color="maroon" style="background-image: url('assets/meroon.jpg');"></button>
+              <div class="color-label">লালচে (মেরুন)</div>
+            </div>
+            <div class="color-option">
+              <button type="button" class="checkout-color-variant" data-color="red" style="background-image: url('assets/red.jpg');"></button>
+              <div class="color-label">লাল</div>
+            </div>
+            <div class="color-option">
+              <button type="button" class="checkout-color-variant" data-color="blue" style="background-image: url('assets/blue.jpg');"></button>
+              <div class="color-label">নীল</div>
+            </div>
+            <div class="color-option">
+              <button type="button" class="checkout-color-variant" data-color="lavender" style="background-image: url('assets/lavender.jpg');"></button>
+              <div class="color-label">ল্যাভেন্ডার</div>
+            </div>
+            <div class="color-option">
+              <button type="button" class="checkout-color-variant" data-color="lightpink" style="background-image: url('assets/lightpink.jpg');"></button>
+              <div class="color-label">হালকা গোলাপি</div>
+            </div>
+            <div class="color-option">
+              <button type="button" class="checkout-color-variant" data-color="purple" style="background-image: url('assets/purple.jpg');"></button>
+              <div class="color-label">বেগুনি</div>
+            </div>
+            <div class="color-option">
+              <button type="button" class="checkout-color-variant" data-color="skyblue" style="background-image: url('assets/sky_blue.jpg');"></button>
+              <div class="color-label">আকাশি</div>
+            </div>
+            <div class="color-option">
+              <button type="button" class="checkout-color-variant" data-color="green" style="background-image: url('assets/green.jpg');"></button>
+              <div class="color-label">সবুজ</div>
+            </div>
+            <div class="color-option">
+              <button type="button" class="checkout-color-variant" data-color="oceangreen" style="background-image: url('assets/ocean_green.jpg');"></button>
+              <div class="color-label">সমুদ্র সবুজ</div>
+            </div>
+            <div class="color-option">
+              <button type="button" class="checkout-color-variant" data-color="black" style="background-image: url('assets/black.jpg');"></button>
+              <div class="color-label">কালো</div>
+            </div>
+            <div class="color-option">
+              <button type="button" class="checkout-color-variant" data-color="onion" style="background-image: url('assets/onion.jpg');"></button>
+              <div class="color-label">পেঁয়াজ রঙ</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="custName">আপনার নাম</label>
+          <input class="form-input" type="text" id="custName" placeholder="যেমন: লামিয়া লাম" autocomplete="name">
+          <p class="form-error-text">সঠিক নাম লিখুন (কমপক্ষে ২ অক্ষর)।</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="custPhone">মোবাইল নম্বর</label>
+          <input class="form-input" type="tel" id="custPhone" placeholder="01XXXXXXXXX" autocomplete="tel">
+          <p class="form-error-text">সঠিক ১১ ডিজিটের বাংলাদেশি নম্বর দিন (যেমন: 017XXXXXXXX)।</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="custAddress">সম্পূর্ণ ঠিকানা</label>
+          <textarea class="form-textarea" id="custAddress" placeholder="বাসা/রোড, এলাকা, থানা, জেলা" autocomplete="street-address"></textarea>
+          <p class="form-error-text">ডেলিভারির জন্য বিস্তারিত ঠিকানা লিখুন।</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ডেলিভারি এলাকা</label>
+          <div class="area-options">
+            <label class="area-option">
+              <input type="radio" name="area" value="dhaka" checked>
+              <span class="area-option__card"><strong>ঢাকার ভিতরে</strong><span id="areaDhakaCharge">ফ্রি ডেলিভারি</span></span>
+            </label>
+            <label class="area-option">
+              <input type="radio" name="area" value="outside">
+              <span class="area-option__card"><strong>ঢাকার বাইরে</strong><span id="areaOutsideCharge">ফ্রি ডেলিভারি</span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">পরিমাণ</label>
+          <div class="qty-stepper">
+            <button type="button" class="qty-stepper__btn" id="qtyMinus" aria-label="কমান">−</button>
+            <span class="qty-stepper__value" id="qtyValue">1</span>
+            <button type="button" class="qty-stepper__btn" id="qtyPlus" aria-label="বাড়ান">+</button>
+          </div>
+        </div>
+
+        <p id="formMessage" class="form-error-text" style="display:none; margin-bottom: 16px;"></p>
+
+        <button type="submit" class="btn btn--primary btn--block" id="confirmOrderBtn" data-field="confirmButtonText">অর্ডার কনফার্ম করুন</button>
+      </form>
+    </div>
+
+    <div>
+      <div class="order-summary-card">
+        <div class="order-summary__product">
+          <div class="order-summary__thumb"><img id="summaryProductImage" src="https://placehold.co/200x200/6E1F2C/F4E9D3?text=Surovi" alt="প্রোডাক্ট"></div>
+          <div>
+            <div class="order-summary__name" id="summaryProductName">প্রিমিয়াম কম্বো সেট</div>
+            <div class="order-summary__row" style="padding:0;"><span>একক মূল্য</span> <span id="summaryUnitPrice">৳১৭০০</span></div>
+          </div>
+        </div>
+        <div class="order-summary__row"><span>সাবটোটাল</span><span id="summarySubtotal">৳১৭০০</span></div>
+        <div class="order-summary__row"><span>ডেলিভারি চার্জ</span><span id="summaryDelivery">ফ্রি</span></div>
+        <div class="order-summary__row order-summary__row--total"><span>সর্বমোটাল</span><span id="summaryTotal">৳১৭০০</span></div>
+        <div class="cod-note">
+          <span data-field="codNote">💰 ক্যাশ অন ডেলিভারি — পণ্য হাতে পেয়ে ডেলিভারি ম্যানকে টাকা দিন। অগ্রিম কোনো টাকা লাগবে না।</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script defer src="https://www.gstatic.com/firebasejs/12.11.0/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore-compat.js"></script>
+<script defer src="config.js"></script>
+<script defer src="pixel.js"></script>
+<script defer src="checkout.js"></script>
+</body>
+</html>
+
+

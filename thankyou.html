@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ধন্যবাদ — অর্ডার সম্পন্ন হয়েছে | সুরভি</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a href="index.html" class="brand"><span class="brand__drop"></span> সুরভি</a>
+  </div>
+</header>
+
+<div class="thankyou-wrap">
+  <div class="container">
+    <div class="thankyou-card">
+      <div class="seal">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 13l4 4L19 7" stroke="#F4E9D3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1 class="thankyou-card__title" data-field="thankyouTitle">ধন্যবাদ! আপনার অর্ডার সম্পন্ন হয়েছে</h1>
+      <p class="thankyou-card__message" data-field="thankyouMessage">আমাদের একজন প্রতিনিধি শীঘ্রই আপনার নম্বরে কল করে অর্ডারটা কনফার্ম করবেন।</p>
+
+      <div id="orderDetails" class="order-details">
+        <div class="order-details__row"><span>অর্ডার আইডি</span><span id="orderId">—</span></div>
+        <div class="order-details__row"><span>প্রোডাক্ট</span><span id="orderProduct">—</span></div>
+        <div class="order-details__row"><span>ডেলিভারি এলাকা</span><span id="orderArea">—</span></div>
+        <div class="order-details__row"><span>সর্বমোট (COD)</span><span id="orderTotal">—</span></div>
+      </div>
+
+      <div id="noOrderMessage" style="display:none;">
+        <p class="thankyou-note">এই সেশনে কোনো অর্ডারের তথ্য খুঁজে পাওয়া যায়নি। যদি এইমাত্র অর্ডার করে থাকেন, দয়া করে আবার চেষ্টা করুন।</p>
+      </div>
+
+      <p class="thankyou-note" data-field="confirmationNote">প্রশ্ন থাকলে হেডারে দেওয়া নম্বরে সরাসরি কল করতে পারেন।</p>
+      <a href="index.html" class="btn btn--dark">হোমে ফিরে যান</a>
+    </div>
+  </div>
+</div>
+
+<script defer src="https://www.gstatic.com/firebasejs/12.11.0/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore-compat.js"></script>
+<script defer src="config.js"></script>
+<script defer src="pixel.js"></script>
+<script defer src="thankyou.js"></script>
+</body>
+</html>

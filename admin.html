@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>অ্যাডমিন প্যানেল — সুরভি</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-body">
+
+<!-- ===== লগইন স্ক্রিন ===== -->
+<div id="loginSection" class="admin-login-wrap">
+  <div class="admin-login-card">
+    <div class="admin-login-card__brand">সুরভি অ্যাডমিন</div>
+    <p class="admin-login-card__sub">অর্ডার দেখতে ও কনটেন্ট এডিট করতে লগইন করুন</p>
+    <div id="loginError" class="login-error"></div>
+    <form id="loginForm" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="adminEmail">ইমেইল</label>
+        <input class="form-input" type="email" id="adminEmail" autocomplete="username" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="adminPassword">পাসওয়ার্ড</label>
+        <input class="form-input" type="password" id="adminPassword" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn--primary btn--block" id="loginBtn">লগইন করুন</button>
+    </form>
+    <p class="form-hint text-center mt-4">Admin Access করার চেষ্ঠা করলে নিজের Device IP বের হয়ে যাবে</p>
+  </div>
+</div>
+
+<!-- ===== ড্যাশবোর্ড (লগইন করার পর দেখা যাবে) ===== -->
+<div id="dashboardSection" style="display:none;">
+  <div class="admin-topbar">
+    <div class="container admin-topbar__inner">
+      <div class="admin-topbar__brand"><span class="brand__drop"></span> Seodra House</div>
+      <div class="admin-user">
+        <span id="adminEmailLabel"></span>
+        <button class="btn btn--outline btn--sm" id="logoutBtn">লগ আউট</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-tabs">
+    <div class="container" style="display:flex;">
+      <button class="admin-tab is-active" data-panel="panelOrders">অর্ডারসমূহ</button>
+      <button class="admin-tab" data-panel="panelContent">কন্টেন্ট এডিট</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- ---- Orders panel ---- -->
+    <div id="panelOrders" class="admin-panel is-active">
+      <div class="stat-cards">
+        <div class="stat-card"><div class="stat-card__label">মোট অর্ডার</div><div class="stat-card__value" id="statTotalOrders">0</div></div>
+        <div class="stat-card"><div class="stat-card__label">অপেক্ষমান</div><div class="stat-card__value" id="statPending">0</div></div>
+        <div class="stat-card"><div class="stat-card__label">মোট আয় (বাতিল বাদে)</div><div class="stat-card__value" id="statRevenue">৳0</div></div>
+      </div>
+
+      <div class="orders-table-wrap">
+        <div class="orders-toolbar">
+          <select class="form-select" id="statusFilter">
+            <option value="all">সব স্ট্যাটাস</option>
+            <option value="pending">অপেক্ষমান</option>
+            <option value="confirmed">কনফার্মড</option>
+            <option value="shipped">শিপড</option>
+            <option value="delivered">ডেলিভার্ড</option>
+            <option value="cancelled">বাতিল</option>
+          </select>
+          <input class="form-input" type="text" id="searchOrders" placeholder="নাম বা ফোন নম্বর দিয়ে খুঁজুন...">
+        </div>
+        <div class="table-scroll">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>তারিখ</th><th>কাস্টমার</th><th>ঠিকানা</th><th>প্রোডাক্ট</th><th>রঙ</th><th></th>মোট</th><th>স্ট্যাটাস</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody"></tbody>
+          </table>
+        </div>
+        <div id="ordersEmptyState" class="empty-state" style="display:none;">
+          <p class="empty-state__title">এখনো কোনো অর্ডার আসেনি</p>
+          <p>কোনো কাস্টমার চেকআউট করলে অর্ডারটা এখানে সাথে সাথে দেখা যাবে।</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---- Content editor panel ---- -->
+    <div id="panelContent" class="admin-panel">
+      <div class="content-page-picker">
+        <button data-page="landing" class="is-active">ল্যান্ডিং পেজ</button>
+        <button data-page="checkout">চেকআউট পেজ</button>
+        <button data-page="thankyou">থ্যাংক ইউ পেজ</button>
+      </div>
+      <div class="content-editor-card">
+        <div class="content-fields-grid" id="contentFieldsGrid"></div>
+        <div class="save-bar">
+          <button class="btn btn--primary" id="saveContentBtn">সেভ করুন</button>
+          <span class="save-status" id="saveStatus"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script defer src="https://www.gstatic.com/firebasejs/12.11.0/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/12.11.0/firebase-auth-compat.js"></script>
+<script defer src="config.js"></script>
+<script defer src="admin.js"></script>
+</body>
+</html>
